@@ -11,8 +11,8 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class OrderFragment :Fragment(){
-    var num:String = ""
+class OrderFragment(num: String):Fragment(){
+    var num = num
     //var map_meal = mutableMapOf<String,String>()
     lateinit var meal:String
     //var map_sideDish = mutableMapOf<String,List<String>>()
@@ -51,13 +51,17 @@ class OrderFragment :Fragment(){
         /*intent?.extras?.let{
             this.num = it.getString("num").toString()
             Log.e("num",this.num)
-            tv_num.text = "桌號:"+this.num
+            if (tv_num != null) {
+                tv_num.text = "桌號:"+this.num
+            }
         }*/
 
-        val bundle = requireActivity().intent.extras
-        val name = bundle!!.getString("num").toString()
+
+        val name = num
         if (tv_num != null) {
-            tv_num.text = "桌號:"+this.num
+            Log.e("num",name)
+            print("num is $name")
+            tv_num.text = "桌號:"+name
         }
 
         if (radioGroup != null) {

@@ -11,7 +11,7 @@ import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 
-class CartFragment :Fragment(){
+class CartFragment(num: String) :Fragment(){
     var num:String = ""
     //var map_meal = mutableMapOf<String,String>()
     lateinit var meal:String
@@ -30,7 +30,7 @@ class CartFragment :Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_order,container,false)
+        return inflater.inflate(R.layout.fragment_cart,container,false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
