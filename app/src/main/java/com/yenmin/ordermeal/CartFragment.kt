@@ -1,0 +1,96 @@
+package com.yenmin.ordermeal
+
+import android.os.Bundle
+import android.util.Log
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.Button
+import android.widget.CheckBox
+import android.widget.RadioGroup
+import android.widget.TextView
+import androidx.fragment.app.Fragment
+
+class CartFragment :Fragment(){
+    var num:String = ""
+    //var map_meal = mutableMapOf<String,String>()
+    lateinit var meal:String
+    //var map_sideDish = mutableMapOf<String,List<String>>()
+    var sideDish = mutableListOf<String>()
+    lateinit var salad:String
+    lateinit var cornSoup:String
+    lateinit var potato:String
+    lateinit var spaghetti:String
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_order,container,false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val btn_add2Cart = getView()?.findViewById<Button>(R.id.btn_add2Cart)
+        val radioGroup = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
+        val cb_salad = getView()?.findViewById<CheckBox>(R.id.cb_salad)
+        this.salad = cb_salad.toString()
+        val cb_cornSoup = getView()?.findViewById<CheckBox>(R.id.cb_cornSoup)
+        this.cornSoup = cb_cornSoup.toString()
+        val cb_potato = getView()?.findViewById<CheckBox>(R.id.cb_potato)
+        this.potato = cb_potato.toString()
+        val cb_spaghetti = getView()?.findViewById<CheckBox>(R.id.cb_spaghetti)
+        this.spaghetti = cb_spaghetti.toString()
+        var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
+
+
+        /*intent?.extras?.let{
+            this.num = it.getString("num").toString()
+            Log.e("num",this.num)
+            tv_num.text = "桌號:"+this.num
+        }*/
+
+        val bundle = requireActivity().intent.extras
+        val name = bundle!!.getString("num").toString()
+        if (tv_num != null) {
+            tv_num.text = "桌號:"+this.num
+        }
+
+        if (radioGroup != null) {
+            radioGroup.setOnCheckedChangeListener{_,i->
+                this.meal = when(i){
+                    R.id.rb_beef -> "牛排"
+                    R.id.rb_pork -> "豬排"
+                    R.id.rb_fish -> "魚排"
+                    else -> "未知"
+                }
+            }
+        }
+
+
+        if (btn_add2Cart != null) {
+            btn_add2Cart.setOnClickListener{
+                var b = Bundle()
+                b.putString("num",this.num)
+                b.putString("meal",this.meal)
+                var sideDishList = ArrayList<String>()
+                this.sideDish.forEach{
+                        item -> sideDishList.add(item)
+                }
+                b.putStringArrayList("sideDish",sideDishList)
+
+                //val pair = Pair(this.map_meal,this.map_sideDish)
+                //cart[this.num,Pair(this.map_meal,this.map_sideDish)]
+            }
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+    }
+}
