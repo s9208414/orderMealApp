@@ -10,10 +10,16 @@ import android.widget.CheckBox
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 class CartFragment(num: String) :Fragment(){
     var num = num
+    lateinit var meal:String
+    lateinit var sideDish:String
+    //接著宣告兩個arraylist，一個用來裝meal的名字，另一個用來裝sideDish的名字(裝之前先把從OrderFragment傳過來的list先flatten再裝)
+    private lateinit var adapter: MyRecyclerAdapter
+    private val order = ArrayList<Order>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -23,7 +29,8 @@ class CartFragment(num: String) :Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
+        meal = arguments?.get("meal") as String
+        sideDish = arguments?.get("sideDish") as String
         return inflater.inflate(R.layout.fragment_cart,container,false)
     }
 
@@ -35,6 +42,14 @@ class CartFragment(num: String) :Fragment(){
         val rv_sideDish = getView()?.findViewById<RecyclerView>(R.id.rv_sideDish)
         val btn_sendOrder = getView()?.findViewById<Button>(R.id.btn_sendOrder)
         var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
+        //創建 MyRecyclerAdapter 並連結 recyclerView
+        adapter = MyRecyclerAdapter(order)
+        if (rv_meal != null) {
+            rv_meal.adapter = adapter
+        }
+        if (rv_sideDish != null) {
+            rv_sideDish.adapter = adapter
+        }
 
 
         /*intent?.extras?.let{
@@ -59,5 +74,5 @@ class CartFragment(num: String) :Fragment(){
 }
 data class Order(
     val name: String,
-    val number: String
+    val number: Int
 )
