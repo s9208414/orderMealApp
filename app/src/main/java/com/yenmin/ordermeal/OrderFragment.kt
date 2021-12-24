@@ -61,7 +61,7 @@ class OrderFragment(num: String):Fragment(){
         if (tv_num != null) {
             Log.e("num",name)
             print("num is $name")
-            tv_num.text = "桌號:"+name
+            tv_num.text = "桌號:"+" "+this.num
         }
 
         if (radioGroup != null) {

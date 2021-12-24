@@ -10,17 +10,10 @@ import android.widget.CheckBox
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.RecyclerView
 
 class CartFragment(num: String) :Fragment(){
-    var num:String = ""
-    //var map_meal = mutableMapOf<String,String>()
-    lateinit var meal:String
-    //var map_sideDish = mutableMapOf<String,List<String>>()
-    var sideDish = mutableListOf<String>()
-    lateinit var salad:String
-    lateinit var cornSoup:String
-    lateinit var potato:String
-    lateinit var spaghetti:String
+    var num = num
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -35,16 +28,11 @@ class CartFragment(num: String) :Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val btn_add2Cart = getView()?.findViewById<Button>(R.id.btn_add2Cart)
-        val radioGroup = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
-        val cb_salad = getView()?.findViewById<CheckBox>(R.id.cb_salad)
-        this.salad = cb_salad.toString()
-        val cb_cornSoup = getView()?.findViewById<CheckBox>(R.id.cb_cornSoup)
-        this.cornSoup = cb_cornSoup.toString()
-        val cb_potato = getView()?.findViewById<CheckBox>(R.id.cb_potato)
-        this.potato = cb_potato.toString()
-        val cb_spaghetti = getView()?.findViewById<CheckBox>(R.id.cb_spaghetti)
-        this.spaghetti = cb_spaghetti.toString()
+        var tv_meal = getView()?.findViewById<TextView>(R.id.tv_meal)
+        var tv_sideDish = getView()?.findViewById<TextView>(R.id.tv_sideDish)
+        val rv_meal = getView()?.findViewById<RecyclerView>(R.id.rv_meal)
+        val rv_sideDish = getView()?.findViewById<RecyclerView>(R.id.rv_sideDish)
+        val btn_sendOrder = getView()?.findViewById<Button>(R.id.btn_sendOrder)
         var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
 
 
@@ -57,36 +45,10 @@ class CartFragment(num: String) :Fragment(){
         val bundle = requireActivity().intent.extras
         val name = bundle!!.getString("num").toString()
         if (tv_num != null) {
-            tv_num.text = "桌號:"+this.num
-        }
-
-        if (radioGroup != null) {
-            radioGroup.setOnCheckedChangeListener{_,i->
-                this.meal = when(i){
-                    R.id.rb_beef -> "牛排"
-                    R.id.rb_pork -> "豬排"
-                    R.id.rb_fish -> "魚排"
-                    else -> "未知"
-                }
-            }
+            tv_num.text = "桌號:"+" "+this.num
         }
 
 
-        if (btn_add2Cart != null) {
-            btn_add2Cart.setOnClickListener{
-                var b = Bundle()
-                b.putString("num",this.num)
-                b.putString("meal",this.meal)
-                var sideDishList = ArrayList<String>()
-                this.sideDish.forEach{
-                        item -> sideDishList.add(item)
-                }
-                b.putStringArrayList("sideDish",sideDishList)
-
-                //val pair = Pair(this.map_meal,this.map_sideDish)
-                //cart[this.num,Pair(this.map_meal,this.map_sideDish)]
-            }
-        }
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
