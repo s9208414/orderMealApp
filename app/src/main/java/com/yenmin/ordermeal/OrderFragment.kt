@@ -1,5 +1,6 @@
 package com.yenmin.ordermeal
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,6 +11,7 @@ import android.widget.CheckBox
 import android.widget.RadioGroup
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 
 class OrderFragment(num: String):Fragment(){
     var num = num
@@ -23,6 +25,7 @@ class OrderFragment(num: String):Fragment(){
     lateinit var spaghetti:String
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -86,9 +89,13 @@ class OrderFragment(num: String):Fragment(){
                         item -> sideDishList.add(item)
                 }
                 b.putStringArrayList("sideDish",sideDishList)
+                val fragment = CartFragment(num)
+                fragment.arguments = b
+                fragmentManager?.beginTransaction()?.replace(R.id.viewPager,fragment)?.commit()
 
                 //val pair = Pair(this.map_meal,this.map_sideDish)
                 //cart[this.num,Pair(this.map_meal,this.map_sideDish)]
+
             }
         }
     }

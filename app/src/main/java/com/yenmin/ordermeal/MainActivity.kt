@@ -22,9 +22,11 @@ class MainActivity : AppCompatActivity() {
         var pager = findViewById<ViewPager2>(R.id.viewPager)
         var tL = findViewById<TabLayout>(R.id.tabs)
         var num : String
+
         intent?.extras?.let{
             num = it.getString("num").toString()
             pager.adapter = ViewPagerAdapter(supportFragmentManager,lifecycle,num)
+            supportFragmentManager.beginTransaction().replace(R.id.viewPager,OrderFragment(num)).commit()
         }
         TabLayoutMediator(tL,pager){
                 tab,position -> tab.text = FragmentTitleList[position]

@@ -23,6 +23,7 @@ class CartFragment(num: String) :Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         return inflater.inflate(R.layout.fragment_cart,container,false)
     }
 
