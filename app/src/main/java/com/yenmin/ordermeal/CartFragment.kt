@@ -57,3 +57,7 @@ class CartFragment(num: String) :Fragment(){
 
     }
 }
+data class Order(
+    val name: String,
+    val number: String
+)
