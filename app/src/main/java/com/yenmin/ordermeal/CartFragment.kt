@@ -5,19 +5,21 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.RadioGroup
-import android.widget.TextView
+import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.lang.Exception
 
 class CartFragment(num: String) :Fragment(){
     var num = num
-    lateinit var meal:String
-    lateinit var sideDish:String
+    lateinit var meal: String
+    lateinit var sideDish: ArrayList<String>
     //接著宣告兩個arraylist，一個用來裝meal的名字，另一個用來裝sideDish的名字(裝之前先把從OrderFragment傳過來的list先flatten再裝)
+    //lateinit var mealList:ArrayList<String>
+    //lateinit var sideDishList:ArrayList<String>
+    var mealMap = mutableMapOf<String,Int>("beef" to 0,"pork" to 0,"fish" to 0)
+    var sideDishMap = mutableMapOf<String,Int>("salad" to 0,"cornSoup" to 0,"potato" to 0,"spaghetti" to 0)
     private lateinit var adapter: MyRecyclerAdapter
     private val order = ArrayList<Order>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,8 +31,29 @@ class CartFragment(num: String) :Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        meal = arguments?.get("meal") as String
-        sideDish = arguments?.get("sideDish") as String
+        try {
+            meal = arguments?.get("meal") as String
+            sideDish = arguments?.get("sideDish") as ArrayList<String>
+        }catch (E: Exception){
+            meal = ""
+            sideDish = ArrayList()
+            sideDish.add("")
+            Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
+        }
+
+        if(meal in mealMap.keys){
+            mealMap[meal] = 1
+            order.add(Order(meal, mealMap.get(meal)!!))
+        }
+        if(sideDish != null){
+            for(i in sideDish){
+                if(i in sideDishMap.keys){
+                    sideDishMap[i] = 1
+                    order.add(Order(i, sideDishMap.get(i)!!))
+                }
+            }
+        }
+
         return inflater.inflate(R.layout.fragment_cart,container,false)
     }
 

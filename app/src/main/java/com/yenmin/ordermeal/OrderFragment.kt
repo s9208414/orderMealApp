@@ -91,7 +91,7 @@ class OrderFragment(num: String):Fragment(){
                 b.putStringArrayList("sideDish",sideDishList)
                 val fragment = CartFragment(num)
                 fragment.arguments = b
-                fragmentManager?.beginTransaction()?.replace(R.id.viewPager,fragment)?.commit()
+                fragmentManager?.beginTransaction()?.commit()
 
                 //val pair = Pair(this.map_meal,this.map_sideDish)
                 //cart[this.num,Pair(this.map_meal,this.map_sideDish)]
