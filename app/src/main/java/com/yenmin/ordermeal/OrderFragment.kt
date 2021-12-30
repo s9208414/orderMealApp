@@ -198,6 +198,8 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
                     //fragmentManager?.beginTransaction()?.show(fragment)?.commitNow()
                     // Use the Kotlin extension in the fragment-ktx artifact
                     fragmentManager?.setFragmentResult("toCart", b)
+                    val mainActivity = activity as MainActivity
+                    mainActivity.switch2Cart(isadded)
 
                 }else if(meal == "" || sideDish.isEmpty()){
                     isadded = false
@@ -210,8 +212,7 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
                 //呼叫getFragmentManager()的方法來取得FragmentManager
                 //fm.beginTransaction().replace(R.id.viewPager, CartFragment(num)).commit()
                 //sm.iAmMSG("changeFragment")
-                val mainActivity = activity as MainActivity
-                mainActivity.switch2Cart(isadded)
+
                 //requireActivity().supportFragmentManager.beginTransaction().replace(R.id.viewPager,CartFragment(num)).commit()
 
             }

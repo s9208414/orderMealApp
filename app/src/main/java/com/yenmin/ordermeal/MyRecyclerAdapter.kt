@@ -26,7 +26,7 @@ class MyRecyclerAdapter(private val data: ArrayList<Order>):RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.tv_name.text = data[position].name
-        holder.tv_number.text = data[position].number.toString()
+        holder.tv_number.text = "X"+data[position].number.toString()
         //設定監聽器，使用 removeAt()刪除指定位置的資料
         holder.img_delete.setOnClickListener {
             data.removeAt(position)

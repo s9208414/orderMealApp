@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,8 +20,8 @@ class CartFragment(num: String) :Fragment(){
     //接著宣告兩個arraylist，一個用來裝meal的名字，另一個用來裝sideDish的名字(裝之前先把從OrderFragment傳過來的list先flatten再裝)
     //lateinit var mealList:ArrayList<String>
     //lateinit var sideDishList:ArrayList<String>
-    var mealMap = mutableMapOf<String,Int>("beef" to 0,"pork" to 0,"fish" to 0)
-    var sideDishMap = mutableMapOf<String,Int>("salad" to 0,"cornSoup" to 0,"potato" to 0,"spaghetti" to 0)
+    var mealMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
+    var sideDishMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
     private lateinit var adapter: MyRecyclerAdapter
     private var order = ArrayList<Order>()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,25 +59,7 @@ class CartFragment(num: String) :Fragment(){
                 }
             }
         }*/
-        fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
-            meal = bundle.getString("meal").toString()
-            sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
-            if(meal in mealMap.keys){
-                mealMap[meal] = 1
-                order.add(Order(meal, mealMap.get(meal)!!))
-            }
-            if(sideDish != null){
-                for(i in sideDish){
-                    if(i in sideDishMap.keys){
-                        sideDishMap[i] = 1
-                        order.add(Order(i, sideDishMap.get(i)!!))
-                    }
-                }
-            }
-            Log.e("meal",meal)
-            Log.e("orderList", order.toString())
-            Log.e("已執行到加到購物車","true")
-        }
+
         Log.e("CartFragment","onCreateView")
 
         return inflater.inflate(R.layout.fragment_cart,container,false)
@@ -95,9 +78,11 @@ class CartFragment(num: String) :Fragment(){
         //創建 MyRecyclerAdapter 並連結 recyclerView
         adapter = MyRecyclerAdapter(order)
         if (rv_meal != null) {
+            rv_meal.layoutManager = LinearLayoutManager(requireActivity())
             rv_meal.adapter = adapter
         }
         if (rv_sideDish != null) {
+            rv_sideDish.layoutManager = LinearLayoutManager(requireActivity())
             rv_sideDish.adapter = adapter
         }
 
@@ -113,7 +98,29 @@ class CartFragment(num: String) :Fragment(){
         if (tv_num != null) {
             tv_num.text = "桌號:"+" "+this.num
         }
+        fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
+            meal = bundle.getString("meal").toString()
+            sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
+            if(meal in mealMap.keys){
+                Log.e("meal in mealMap","true")
+                mealMap[meal] = 1
+                order.add(Order(meal, mealMap.get(meal)!!))
+            }
+            if(sideDish != null){
+                for(i in sideDish){
+                    if(i in sideDishMap.keys){
+                        sideDishMap[i] = 1
+                        order.add(Order(i, sideDishMap.get(i)!!))
+                    }
+                }
+            }
+            adapter.notifyDataSetChanged()
 
+            Log.e("meal",meal)
+            Log.e("sideDish",sideDish.toString())
+            Log.e("orderListSize", order.size.toString())
+            Log.e("已執行到加到購物車","true")
+        }
 
 
     }

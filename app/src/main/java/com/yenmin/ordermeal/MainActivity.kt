@@ -51,10 +51,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun switch2Cart(isadded: Boolean){
-        //Log.e("switch","true")
+        Log.e("switch","true")
         /*val cartfragment:CartFragment = myViewPagerAdapter.instantiateItem(pager,1) as CartFragment
         cartfragment.check()*/
-        if(isadded == false){
+        if(isadded == true){
             pager.setCurrentItem(1,true)
         }
 
