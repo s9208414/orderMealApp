@@ -1,5 +1,6 @@
 package com.yenmin.ordermeal
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -21,9 +22,10 @@ class CartFragment(num: String) :Fragment(){
     var mealMap = mutableMapOf<String,Int>("beef" to 0,"pork" to 0,"fish" to 0)
     var sideDishMap = mutableMapOf<String,Int>("salad" to 0,"cornSoup" to 0,"potato" to 0,"spaghetti" to 0)
     private lateinit var adapter: MyRecyclerAdapter
-    private val order = ArrayList<Order>()
+    private var order = ArrayList<Order>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -31,14 +33,17 @@ class CartFragment(num: String) :Fragment(){
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        try {
+        /*try {
             meal = arguments?.get("meal") as String
             sideDish = arguments?.get("sideDish") as ArrayList<String>
+            //Toast.makeText(requireActivity(),"已收到資料",Toast.LENGTH_SHORT)
+            Log.e("資料已收到","true")
         }catch (E: Exception){
             meal = ""
             sideDish = ArrayList()
             sideDish.add("")
-            Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
+            //Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
+            Log.e("資料已收到","false")
         }
 
         if(meal in mealMap.keys){
@@ -52,13 +57,35 @@ class CartFragment(num: String) :Fragment(){
                     order.add(Order(i, sideDishMap.get(i)!!))
                 }
             }
+        }*/
+        fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
+            meal = bundle.getString("meal").toString()
+            sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
+            if(meal in mealMap.keys){
+                mealMap[meal] = 1
+                order.add(Order(meal, mealMap.get(meal)!!))
+            }
+            if(sideDish != null){
+                for(i in sideDish){
+                    if(i in sideDishMap.keys){
+                        sideDishMap[i] = 1
+                        order.add(Order(i, sideDishMap.get(i)!!))
+                    }
+                }
+            }
+            Log.e("meal",meal)
+            Log.e("orderList", order.toString())
+            Log.e("已執行到加到購物車","true")
         }
+        Log.e("CartFragment","onCreateView")
 
         return inflater.inflate(R.layout.fragment_cart,container,false)
     }
 
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        Log.e("CartFragment","onViewCreated")
         var tv_meal = getView()?.findViewById<TextView>(R.id.tv_meal)
         var tv_sideDish = getView()?.findViewById<TextView>(R.id.tv_sideDish)
         val rv_meal = getView()?.findViewById<RecyclerView>(R.id.rv_meal)
@@ -88,11 +115,53 @@ class CartFragment(num: String) :Fragment(){
         }
 
 
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        Log.e("CartFragment","onActivityCreated")
+        /*try {
+            meal = arguments?.get("meal") as String
+            sideDish = arguments?.get("sideDish") as ArrayList<String>
+        }catch (E: Exception){
+            meal = ""
+            sideDish = ArrayList()
+            sideDish.add("")
+            Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
+        }
 
+        if(meal in mealMap.keys){
+            mealMap[meal] = 1
+            order.add(Order(meal, mealMap.get(meal)!!))
+        }
+        if(sideDish != null){
+            for(i in sideDish){
+                if(i in sideDishMap.keys){
+                    sideDishMap[i] = 1
+                    order.add(Order(i, sideDishMap.get(i)!!))
+                }
+            }
+        }*/
+    }
+
+    /*fun check(){
+        try {
+            meal = arguments?.get("meal") as String
+            sideDish = arguments?.get("sideDish") as ArrayList<String>
+            Log.e("check","true")
+        }catch (E: Exception){
+            meal = ""
+            sideDish = ArrayList()
+            sideDish.add("")
+            Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
+        }
+    }*/
+
+
+    override fun onStart() {
+        super.onStart()
+        Log.e("CartFragment","onStart")
     }
 }
 data class Order(
