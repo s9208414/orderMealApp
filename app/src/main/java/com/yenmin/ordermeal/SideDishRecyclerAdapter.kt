@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import java.text.FieldPosition
 
-class MyRecyclerAdapter(private val data: ArrayList<Order>):RecyclerView.Adapter<MyRecyclerAdapter.ViewHolder>(){
+class SideDishRecyclerAdapter(private val data: ArrayList<Order>):RecyclerView.Adapter<SideDishRecyclerAdapter.ViewHolder>(){
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_name = v.findViewById<TextView>(R.id.name)
         val tv_number = v.findViewById<TextView>(R.id.number)

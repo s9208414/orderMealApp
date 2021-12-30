@@ -22,8 +22,10 @@ class CartFragment(num: String) :Fragment(){
     //lateinit var sideDishList:ArrayList<String>
     var mealMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
     var sideDishMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
-    private lateinit var adapter: MyRecyclerAdapter
-    private var order = ArrayList<Order>()
+    private lateinit var mealadapter: MealRecyclerAdapter
+    private lateinit var sidedishadapter: SideDishRecyclerAdapter
+    private var orderMeal = ArrayList<Order>()
+    private var orderSideDish = ArrayList<Order>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -76,14 +78,15 @@ class CartFragment(num: String) :Fragment(){
         val btn_sendOrder = getView()?.findViewById<Button>(R.id.btn_sendOrder)
         var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
         //創建 MyRecyclerAdapter 並連結 recyclerView
-        adapter = MyRecyclerAdapter(order)
+        mealadapter = MealRecyclerAdapter(orderMeal)
+        sidedishadapter = SideDishRecyclerAdapter(orderSideDish)
         if (rv_meal != null) {
             rv_meal.layoutManager = LinearLayoutManager(requireActivity())
-            rv_meal.adapter = adapter
+            rv_meal.adapter = mealadapter
         }
         if (rv_sideDish != null) {
             rv_sideDish.layoutManager = LinearLayoutManager(requireActivity())
-            rv_sideDish.adapter = adapter
+            rv_sideDish.adapter = sidedishadapter
         }
 
 
@@ -104,21 +107,22 @@ class CartFragment(num: String) :Fragment(){
             if(meal in mealMap.keys){
                 Log.e("meal in mealMap","true")
                 mealMap[meal] = 1
-                order.add(Order(meal, mealMap.get(meal)!!))
+                orderMeal.add(Order(meal, mealMap.get(meal)!!))
             }
             if(sideDish != null){
                 for(i in sideDish){
                     if(i in sideDishMap.keys){
                         sideDishMap[i] = 1
-                        order.add(Order(i, sideDishMap.get(i)!!))
+                        orderSideDish.add(Order(i, sideDishMap.get(i)!!))
                     }
                 }
             }
-            adapter.notifyDataSetChanged()
-
+            mealadapter.notifyDataSetChanged()
+            sidedishadapter.notifyDataSetChanged()
             Log.e("meal",meal)
             Log.e("sideDish",sideDish.toString())
-            Log.e("orderListSize", order.size.toString())
+            Log.e("orderMealListSize", orderMeal.size.toString())
+            Log.e("sideDishListSize", orderSideDish.size.toString())
             Log.e("已執行到加到購物車","true")
         }
 
