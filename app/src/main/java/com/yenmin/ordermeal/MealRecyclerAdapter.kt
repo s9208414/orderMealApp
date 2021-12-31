@@ -34,9 +34,5 @@ class MealRecyclerAdapter(private val data: ArrayList<Order>):RecyclerView.Adapt
         }
     }
 
-    /*fun addItem(text: String?) {
-        // 為了示範效果，固定新增在位置3。若要新增在最前面就把3改成0
-        data.add(data.size-1, text)
-        notifyItemInserted(3)
-    }*/
+
 }
