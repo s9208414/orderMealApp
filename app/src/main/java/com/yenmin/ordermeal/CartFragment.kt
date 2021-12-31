@@ -108,17 +108,19 @@ class CartFragment(num: String) :Fragment(){
                 Log.e("meal in mealMap","true")
                 mealMap[meal] = 1
                 orderMeal.add(Order(meal, mealMap.get(meal)!!))
+                mealadapter.notifyDataSetChanged()
             }
             if(sideDish != null){
                 for(i in sideDish){
                     if(i in sideDishMap.keys){
                         sideDishMap[i] = 1
                         orderSideDish.add(Order(i, sideDishMap.get(i)!!))
+                        sidedishadapter.notifyDataSetChanged()
                     }
                 }
             }
-            mealadapter.notifyDataSetChanged()
-            sidedishadapter.notifyDataSetChanged()
+
+
             Log.e("meal",meal)
             Log.e("sideDish",sideDish.toString())
             Log.e("orderMealListSize", orderMeal.size.toString())
