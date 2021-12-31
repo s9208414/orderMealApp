@@ -23,7 +23,9 @@ class CartFragment(num: String) :Fragment(){
     //lateinit var mealList:ArrayList<String>
     //lateinit var sideDishList:ArrayList<String>
     var mealMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
+    var mealIdxMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
     var sideDishMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
+    var sideDishIdxMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
     private lateinit var mealadapter: MealRecyclerAdapter
     private lateinit var sidedishadapter: SideDishRecyclerAdapter
     private var orderMeal = ArrayList<Order>()
@@ -92,15 +94,38 @@ class CartFragment(num: String) :Fragment(){
             sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
             if(meal in mealMap.keys){
                 Log.e("meal in mealMap","true")
-                mealMap[meal] = 1
-                orderMeal.add(Order(meal, mealMap.get(meal)!!))
+                var mealNum = mealMap[meal]?.plus(1)
+
+                if (mealNum != null) {
+                    mealMap[meal] = mealNum.toInt()
+                }
+                if (mealNum != null) {
+                    if(mealNum > 1){
+                        orderMeal[mealIdxMap[meal]!!].number = mealNum
+                    }else{
+                        orderMeal.add(Order(meal, mealMap.get(meal)!!))
+                        mealIdxMap[meal] = orderMeal.size-1
+                    }
+                }
+
                 mealadapter.notifyDataSetChanged()
             }
             if(sideDish != null){
                 for(i in sideDish){
                     if(i in sideDishMap.keys){
-                        sideDishMap[i] = 1
-                        orderSideDish.add(Order(i, sideDishMap.get(i)!!))
+                        var sideDishNum = sideDishMap[i]?.plus(1)
+
+                        if (sideDishNum != null) {
+                            sideDishMap[i] = sideDishNum.toInt()
+                        }
+                        if (sideDishNum != null) {
+                            if(sideDishNum > 1){
+                                orderSideDish[sideDishIdxMap[i]!!].number = sideDishNum
+                            }else{
+                                orderSideDish.add(Order(i, sideDishMap.get(i)!!))
+                                sideDishIdxMap[i] = orderSideDish.size-1
+                            }
+                        }
                         sidedishadapter.notifyDataSetChanged()
                     }
                 }
@@ -165,5 +190,5 @@ class CartFragment(num: String) :Fragment(){
 }
 data class Order(
     val name: String,
-    val number: Int
+    var number: Int
 )
