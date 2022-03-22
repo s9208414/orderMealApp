@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "82102639981",
+    "firebase_url": "https://myapp-84927-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "myapp-84927",
+    "storage_bucket": "myapp-84927.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:82102639981:android:d6a989c80ade69509ece64",
+        "android_client_info": {
+          "package_name": "com.yenmin.ordermeal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "82102639981-1o2g5cvci6oiedjibgfj2g4ir3omsha1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgOZJYhj-uwOw4SWOvp35w54epUWtvedI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "82102639981-1o2g5cvci6oiedjibgfj2g4ir3omsha1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

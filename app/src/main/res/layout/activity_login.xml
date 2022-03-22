@@ -16,25 +16,66 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="@+id/et_num"/>
+        app:layout_constraintBottom_toTopOf="@+id/et_name"/>
+    <Button
+        android:id="@+id/btn_customer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="顧客進入"
+        android:layout_marginTop="80dp"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/btn_manager"
+        app:layout_constraintStart_toStartOf="parent" />
+    <Button
+        android:id="@+id/btn_manager"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="店家進入"
+        android:layout_marginTop="40dp"
+        app:layout_constraintTop_toBottomOf="@+id/btn_customer"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/et_name"
+        app:layout_constraintStart_toStartOf="parent" />
     <EditText
-        android:id="@+id/et_num"
+        android:id="@+id/et_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="請輸入姓名"
+        android:textAlignment="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome"
+        app:layout_constraintBottom_toTopOf="@+id/btn_sendNum"/>
+    <EditText
+        android:id="@+id/et_employee_num"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="number"
-        android:hint="請輸入桌號"
+        android:hint="請輸入工作證號碼"
         android:textAlignment="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_welcome"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_welcome"
+        app:layout_constraintBottom_toTopOf="@+id/btn_employee_sendNum"/>
     <Button
         android:id="@+id/btn_sendNum"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="送出"
-        app:layout_constraintTop_toTopOf="@+id/et_num"
+        app:layout_constraintTop_toBottomOf="@+id/et_name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="0dp"/>
+    <Button
+        android:id="@+id/btn_employee_sendNum"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="送出"
+        app:layout_constraintTop_toBottomOf="@+id/et_employee_num"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
