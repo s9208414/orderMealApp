@@ -23,7 +23,8 @@ import com.google.gson.annotations.SerializedName
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var database: FirebaseDatabase
-    private lateinit var dbRef:DatabaseReference
+    private lateinit var managerRef:DatabaseReference
+    private lateinit var customerRef:DatabaseReference
     lateinit var employeeId: String
     var choose_login = false
     lateinit var btn_sendNum:Button
@@ -35,8 +36,12 @@ class LoginActivity : AppCompatActivity() {
     lateinit var btn_employee_sendNum:Button
 
     private lateinit var mealRef: DatabaseReference
+    //店家欄位
     var id = ""
     var position = ""
+    //客人欄位
+    var name = ""
+    var number = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,12 +67,13 @@ class LoginActivity : AppCompatActivity() {
 
         database = FirebaseDatabase.getInstance()
         //dbRef = database.getReference("manager").child("1").child("id")
-        dbRef = database.getReference("manager")
+        managerRef = database.getReference("manager")
+        customerRef = database.getReference("customer")
         FirebaseApp.initializeApp(this)
 
         var managerList = mutableListOf<Manager>()
-
-
+        var customerList = mutableListOf<Customer>()
+        //設定按下顧客進入按鈕產生的UI
         btn_customer.setOnClickListener {
             tv_welcome_params.bottomToTop = et_name.id
             tv_welcome_params.topMargin = 0
@@ -78,6 +84,7 @@ class LoginActivity : AppCompatActivity() {
             btn_sendNum.visibility = View.VISIBLE
             choose_login = true
         }
+        //設定按下店家進入按鈕產生的UI
         btn_manager.setOnClickListener {
             tv_welcome_params.bottomToTop = et_employee_num.id
             tv_welcome_params.topMargin = 0
@@ -88,23 +95,60 @@ class LoginActivity : AppCompatActivity() {
             btn_employee_sendNum.visibility = View.VISIBLE
             choose_login = true
         }
+
         btn_sendNum.setOnClickListener {
+            var customerLogin = false
             if(et_name.length()<1){
-               Toast.makeText(this,"請輸入桌號",Toast.LENGTH_SHORT).show()
+               Toast.makeText(this,"請輸入姓名",Toast.LENGTH_SHORT).show()
             }else{
-                intent.putExtra("num",et_name.text.toString())
-                startActivity(intent)
+                //intent.putExtra("num",et_name.text.toString())
+                //startActivity(intent)
+                for (i in customerList){
+                    if(et_name.text.toString() == i.name){
+                        customerLogin = true
+                        name = i.name
+                        number = i.number
+
+                    }else{
+                        customerLogin = false
+                    }
+                }
+                //Log.e("customerList",customerList.toString())
+                Log.e("customerLogin",customerLogin.toString())
+                Log.e("number", number.toString())
+                if(customerLogin == true){
+                    intent = Intent(this,MainActivity::class.java)
+                    intent.putExtra("name",name)
+                    intent.putExtra("number",number)
+                    //intent.putExtra("bundle",b)
+                    startActivity(intent)
+                }
             }
 
         }
+        customerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for(i in dataSnapshot.children){
+                        val customer = Gson().fromJson(i.value.toString(), Customer::class.java)
+                        customerList.add(customer)
+                        //Log.e("Value is",i.value.toString())
+                        //managerList.add(Manager(i.value.))
+                    }
+                    Log.e("CustomerList",customerList.toString())
+                    //employeeId = dataSnapshot.getValue<String>().toString()
+
+                    //Log.e("Value is",employeeId.toString())
+                }
+            }
+        })
         btn_employee_sendNum.setOnClickListener {
             var emplyeeLogin = false
             if(et_employee_num.length()<1){
                 Toast.makeText(this,"請輸入員工號碼",Toast.LENGTH_SHORT).show()
             }else{
-                //intent.putExtra("num",et_employee_num.text.toString())
-                //startActivity(intent)
-
                 for (i in managerList){
                     if(et_employee_num.text.toString() == i.id){
                         emplyeeLogin = true
@@ -131,7 +175,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        managerRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -190,4 +234,10 @@ data class Manager(
     var name: String,
     @SerializedName("position")
     var position: String
+)
+data class Customer(
+    @SerializedName("number")
+    var number: Int,
+    @SerializedName("name")
+    var name: String,
 )

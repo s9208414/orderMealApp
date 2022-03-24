@@ -8,13 +8,22 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.setMargins
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
+import com.google.firebase.FirebaseApp
+import com.google.firebase.database.*
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 
-class OrderFragment(num: String,fg2: CartFragment):Fragment(){
+class OrderFragment(num: String):Fragment(){
+    private lateinit var database: FirebaseDatabase
+    private lateinit var mealRef: DatabaseReference
+    private lateinit var sideDishRef: DatabaseReference
     var num = num
-    var fg2 = fg2
+    //var fg2 = fg2
     //var map_meal = mutableMapOf<String,String>()
     lateinit var meal:String
     //var map_sideDish = mutableMapOf<String,List<String>>()
@@ -26,6 +35,12 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
     var isadded:Boolean = false
     //val cb_Id = arrayListOf(R.id.cb_salad,R.id.cb_cornSoup,R.id.cb_potato,R.id.cb_spaghetti)
     //var cb_sideDish = arrayListOf()
+    var mealList = mutableListOf<Meal>()
+    var supplyMealList = mutableListOf<Boolean>()
+    var sideDishList = mutableListOf<SideDish>()
+    var supplySideDishList = mutableListOf<Boolean>()
+    var radioButtonIdList = mutableListOf<Int>()
+    var radioButtonList = mutableListOf<RadioButton>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,6 +57,67 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.e("OrderFragment","onViewCreated")
+        database = FirebaseDatabase.getInstance()
+        mealRef = database.getReference("meal")
+        sideDishRef = database.getReference("sideDish")
+        FirebaseApp.initializeApp(requireActivity())
+
+
+        mealRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            var recordLastCheckBoxId = 0
+            val fragment_order = getView()?.findViewById<ConstraintLayout>(R.id.fragment_order)
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var rg = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        //在這裡依序動態建立RadioButton
+                        val radioButton = RadioButton(requireActivity())
+                        var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
+                        mealList.add(mealFromBase)
+                        supplyMealList.add(mealFromBase.supply)
+                        radioButton.id = str2int("cb_meal_${i.key}")
+                        radioButtonIdList.add(radioButton.id)
+                        radioButton.text = mealFromBase.name
+                        radioButton.layoutParams = ConstraintLayout.LayoutParams(
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
+                            ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                        val radio_params = radioButton.layoutParams as? ConstraintLayout.LayoutParams
+                        for (i in mealList){
+                            if(i.supply == true){
+                                radioButton.text = mealFromBase.name
+                                radioButton.isEnabled = true
+                                radioButton.toggle()
+                            }else{
+                                radioButton.text = mealFromBase.name + " (售罄)"
+                                radioButton.isEnabled = false
+                                radioButton.toggle()
+                            }
+                        }
+                        radioButton.setOnCheckedChangeListener { buttonView, ischecked ->
+                            meal = mealFromBase.name
+                            if (ischecked == true){
+                                Log.e("$meal","已勾選")
+                            }else if(ischecked == false){
+                                Log.e("$meal","未勾選")
+                            }
+                        }
+                        if (rg != null) {
+                            rg.addView(radioButton)
+                        }
+                        radioButtonList.add(radioButton)
+
+
+
+                    }
+
+                }
+            }
+        })
+
+
+
+
         val btn_add2Cart = getView()?.findViewById<Button>(R.id.btn_add2Cart)
         val radioGroup = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
 
@@ -167,16 +243,18 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
             tv_num.text = "桌號:"+" "+this.num
         }
 
-        if (radioGroup != null) {
+        /*if (radioGroup != null) {
             radioGroup.setOnCheckedChangeListener{_,i->
                 this.meal = when(i){
                     R.id.rb_beef -> "牛排"
                     R.id.rb_pork -> "豬排"
                     R.id.rb_fish -> "魚排"
                     else -> "未知"
+
                 }
             }
-        }
+
+        }*/
 
 
         if (btn_add2Cart != null) {
@@ -217,6 +295,16 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
 
             }
         }
+        for (i in radioButtonList){
+            i.isChecked = false
+            i.toggle()
+        }
+    }
+    fun str2int(str: String): Int{
+        val n = str.length
+        var result = 0
+        str.forEach { c -> result = result * 10 + (c.code - 48) }
+        return result
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -230,3 +318,4 @@ class OrderFragment(num: String,fg2: CartFragment):Fragment(){
         //sm = context as SendMessages
     }
 }
+

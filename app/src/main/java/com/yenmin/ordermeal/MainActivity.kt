@@ -34,9 +34,10 @@ class MainActivity : AppCompatActivity() {
 
 
         intent?.extras?.let{
-            num = it.getString("num").toString()
+            num = it.getInt("number").toString()
+            Log.e("tablenum",num)
             fg2 = CartFragment(num)
-            fg1 = OrderFragment(num,fg2)
+            fg1 = OrderFragment(num)
             /*pager.adapter = ViewPagerAdapter(supportFragmentManager,lifecycle,num)
             supportFragmentManager.beginTransaction().commit()*/
             myViewPagerAdapter = MyViewPagerAdapter(supportFragmentManager,num,fg1,fg2)
