@@ -3,7 +3,8 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_modify">
 
     <TextView
         android:id="@+id/tv_num_manager"
@@ -12,7 +13,7 @@
         android:layout_margin="8dp"
         android:text="員工編號:"
         android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_meal"
+        app:layout_constraintBottom_toTopOf="@+id/tv_hint_supply"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/tv_position"
         app:layout_constraintStart_toStartOf="parent"
@@ -25,93 +26,49 @@
         android:layout_margin="8dp"
         android:text="職位:"
         android:textSize="22sp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_meal"
+        app:layout_constraintBottom_toTopOf="@+id/tv_hint_supply"
         app:layout_constraintLeft_toRightOf="@+id/tv_num_manager"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_hint_supply"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="8dp"
+        android:text="點擊選項用以表示該商品供應與否"
+        android:textSize="15sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_num_manager" />
 
     <TextView
         android:id="@+id/tv_meal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="8dp"
-        android:text="主食(請選一項)"
+        android:text="主食"
         android:textSize="22sp"
         app:layout_constraintEnd_toEndOf="@+id/tv_num_manager"
         app:layout_constraintStart_toStartOf="@+id/tv_num_manager"
-        app:layout_constraintTop_toBottomOf="@+id/tv_num_manager" />
-    <RadioGroup
-        android:id="@+id/radioGroup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_meal"
-        app:layout_constraintStart_toStartOf="parent">
-        <RadioButton
-            android:id="@+id/rb_beef"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="牛排"/>
-        <RadioButton
-            android:id="@+id/rb_pork"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="豬排"/>
-        <RadioButton
-            android:id="@+id/rb_fish"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="魚排"/>
-    </RadioGroup>
+        app:layout_constraintTop_toBottomOf="@+id/tv_hint_supply" />
+
+
     <TextView
         android:id="@+id/tv_sideDish"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="副餐(請至少選擇一項)"
+        android:text="副餐"
         android:textSize="22sp"
         android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/radioGroup"
-        app:layout_constraintStart_toStartOf="@id/radioGroup"/>
-    <CheckBox
-        android:id="@+id/cb_salad"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="沙拉"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/tv_sideDish"
-        app:layout_constraintStart_toStartOf="@id/tv_sideDish"/>
-    <CheckBox
-        android:id="@+id/cb_cornSoup"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="玉米濃湯"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cb_salad"
-        app:layout_constraintStart_toStartOf="@id/cb_salad"/>
-    <CheckBox
-        android:id="@+id/cb_potato"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="馬鈴薯"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cb_cornSoup"
-        app:layout_constraintStart_toStartOf="@id/cb_cornSoup"/>
-    <CheckBox
-        android:id="@+id/cb_spaghetti"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="義大利麵"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cb_potato"
-        app:layout_constraintStart_toStartOf="@id/cb_potato"/>
+
+        app:layout_constraintStart_toStartOf="@id/tv_meal"/>
+
     <Button
-        android:id="@+id/btn_add2Cart"
+        android:id="@+id/btn_modify"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="加到購物車"
+        android:text="確認修改"
         android:textSize="22sp"
-        android:layout_margin="8dp"
-        app:layout_constraintTop_toBottomOf="@id/cb_spaghetti"
-        app:layout_constraintStart_toStartOf="@id/cb_spaghetti"/>
+        android:layout_margin="8dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
