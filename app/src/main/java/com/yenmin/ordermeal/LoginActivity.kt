@@ -5,6 +5,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.Editable
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -83,6 +84,7 @@ class LoginActivity : AppCompatActivity() {
             et_name.visibility = View.VISIBLE
             btn_sendNum.visibility = View.VISIBLE
             choose_login = true
+            et_name.text.clear()
         }
         //設定按下店家進入按鈕產生的UI
         btn_manager.setOnClickListener {
@@ -94,6 +96,7 @@ class LoginActivity : AppCompatActivity() {
             et_employee_num.visibility = View.VISIBLE
             btn_employee_sendNum.visibility = View.VISIBLE
             choose_login = true
+            et_employee_num.text.clear()
         }
 
         btn_sendNum.setOnClickListener {
@@ -150,23 +153,23 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this,"請輸入員工號碼",Toast.LENGTH_SHORT).show()
             }else{
                 for (i in managerList){
+                    Log.e("et_employee_num",et_employee_num.toString())
+                    Log.e("et_employee_num.text",et_employee_num.text.toString())
                     if(et_employee_num.text.toString() == i.id){
                         emplyeeLogin = true
                         id = i.id
                         position = i.position
+                        break
 
                     }else{
+                        Log.e("員工","未偵測到登入")
                         emplyeeLogin = false
                     }
                 }
 
-
+                Log.e("managerLogin",emplyeeLogin.toString())
                 if(emplyeeLogin == true){
-                    var b = Bundle()
-                    Log.e("id",id)
-                    Log.e("position",position)
-                    b.putString("id",id)
-                    b.putString("position",position)
+
                     intent = Intent(this,ManagerActivity::class.java)
                     intent.putExtra("id",id)
                     intent.putExtra("position",position)

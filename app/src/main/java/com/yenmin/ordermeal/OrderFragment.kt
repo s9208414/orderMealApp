@@ -41,6 +41,12 @@ class OrderFragment(num: String):Fragment(){
     var supplySideDishList = mutableListOf<Boolean>()
     var radioButtonIdList = mutableListOf<Int>()
     var radioButtonList = mutableListOf<RadioButton>()
+    var checkBoxList = mutableListOf<CheckBox>()
+    lateinit var tv_sideDish: TextView
+    lateinit var btn_add2Cart: Button
+    var initMeal = 0
+    var initSideDish = 0
+    lateinit var rg:RadioGroup
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -57,6 +63,9 @@ class OrderFragment(num: String):Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Log.e("OrderFragment","onViewCreated")
+        tv_sideDish = requireView().findViewById(R.id.tv_sideDish)
+        btn_add2Cart = requireView().findViewById(R.id.btn_add2Cart)
+        rg = requireView().findViewById(R.id.radioGroup)
         database = FirebaseDatabase.getInstance()
         mealRef = database.getReference("meal")
         sideDishRef = database.getReference("sideDish")
@@ -65,10 +74,7 @@ class OrderFragment(num: String):Fragment(){
 
         mealRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
-            var recordLastCheckBoxId = 0
-            val fragment_order = getView()?.findViewById<ConstraintLayout>(R.id.fragment_order)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                var rg = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
                         //在這裡依序動態建立RadioButton
@@ -82,7 +88,6 @@ class OrderFragment(num: String):Fragment(){
                         radioButton.layoutParams = ConstraintLayout.LayoutParams(
                             ConstraintLayout.LayoutParams.WRAP_CONTENT,
                             ConstraintLayout.LayoutParams.WRAP_CONTENT)
-                        val radio_params = radioButton.layoutParams as? ConstraintLayout.LayoutParams
                         for (i in mealList){
                             if(i.supply == true){
                                 radioButton.text = mealFromBase.name
@@ -95,11 +100,11 @@ class OrderFragment(num: String):Fragment(){
                             }
                         }
                         radioButton.setOnCheckedChangeListener { buttonView, ischecked ->
-                            meal = mealFromBase.name
                             if (ischecked == true){
-                                Log.e("$meal","已勾選")
+                                meal = mealFromBase.name
+                                Log.e("meal",meal)
                             }else if(ischecked == false){
-                                Log.e("$meal","未勾選")
+                                //Log.e("$meal","未勾選")
                             }
                         }
                         if (rg != null) {
@@ -110,7 +115,96 @@ class OrderFragment(num: String):Fragment(){
 
 
                     }
+                    initMealState()
+                    Log.e("meal",meal)
+                }
+            }
+        })
 
+        sideDishRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            var recordLastCheckBoxId = 0
+            val fragment_order = getView()?.findViewById<ConstraintLayout>(R.id.fragment_order)
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        //在這裡依序動態建立CheckBox
+                        val checkBox = CheckBox(requireActivity())
+                        var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
+                        sideDishList.add(sideDishFromBase)
+                        supplySideDishList.add(sideDishFromBase.supply)
+
+                        checkBox.id = str2int("cb_sideDish_${i.key}")
+
+                        checkBox.text = sideDishFromBase.name
+                        Log.e("checkBox.id",checkBox.id.toString())
+
+                        checkBox.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                        //checkBox.background = R.drawable.ic_baseline_clear_24
+                        val checkBox_params = checkBox.layoutParams as? ConstraintLayout.LayoutParams
+                        if (checkBox_params != null) {
+                            Log.e("checkBox_params",checkBox_params.toString())
+                            checkBox_params.setMargins(30)
+                        }
+
+                        if(i.key == "1"){
+                            if (checkBox_params != null) {
+                                checkBox_params.startToStart = tv_sideDish.id
+                                checkBox_params.topToBottom = tv_sideDish.id
+                            }
+                        }else{
+                            val temp  = i.key?.toInt()?.minus(1)
+                            if (checkBox_params != null) {
+                                //checkBox_params.topToBottom = getResources().getIdentifier("cb_meal_$temp", "id", activity?.getPackageName())
+                                checkBox_params.topToBottom = recordLastCheckBoxId
+                            }
+                        }
+
+
+                        for (i in sideDishList){
+                            if(i.supply == true){
+                                checkBox.text = sideDishFromBase.name
+                                checkBox.isEnabled = true
+                                checkBox.toggle()
+                            }else{
+                                checkBox.text = sideDishFromBase.name + " (售罄)"
+                                checkBox.isEnabled = false
+                                checkBox.toggle()
+                            }
+                        }
+
+                        checkBox.setOnCheckedChangeListener { buttonView, ischecked ->
+                            if(ischecked){
+                                if(sideDishFromBase.name !in sideDish){
+                                    sideDish.add(sideDishFromBase.name)
+                                    //Toast.makeText(requireActivity(),"目前已選擇:$sideDish",Toast.LENGTH_SHORT).show()
+                                    Log.e("sideDish",sideDish.toString())
+                                }
+                            }else if(!ischecked){
+                                if(sideDishFromBase.name in sideDish){
+                                    sideDish.remove(sideDishFromBase.name)
+                                    //Toast.makeText(requireActivity(),"目前已選擇:$sideDish",Toast.LENGTH_SHORT).show()
+                                    Log.e("sideDish",sideDish.toString())
+                                }
+                            }
+
+                        }
+
+                        checkBox.requestLayout()
+                        if (fragment_order != null) {
+                            fragment_order.addView(checkBox)
+                        }
+                        Log.e("id",checkBox.id.toString())
+                        checkBoxList.add(checkBox)
+                        recordLastCheckBoxId = checkBox.id
+                    }
+                    initSideDishState()
+                    val btn_add2Cart_params = btn_add2Cart.layoutParams as ConstraintLayout.LayoutParams
+                    btn_add2Cart_params.topToBottom = recordLastCheckBoxId
+                    btn_add2Cart_params.startToStart = recordLastCheckBoxId
+                    Log.e("recordLastCheckBoxId",recordLastCheckBoxId.toString())
+                    btn_add2Cart.requestLayout()
+                    Log.e("sideDish",sideDish.toString())
                 }
             }
         })
@@ -118,10 +212,8 @@ class OrderFragment(num: String):Fragment(){
 
 
 
-        val btn_add2Cart = getView()?.findViewById<Button>(R.id.btn_add2Cart)
-        val radioGroup = getView()?.findViewById<RadioGroup>(R.id.radioGroup)
 
-        val cb_salad = getView()?.findViewById<CheckBox>(R.id.cb_salad)
+        /*val cb_salad = getView()?.findViewById<CheckBox>(R.id.cb_salad)
         if (cb_salad != null) {
             this.salad = cb_salad.text.toString()
         }
@@ -221,7 +313,7 @@ class OrderFragment(num: String):Fragment(){
                     }
                 }
             }
-        }
+        }*/
 
         var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
         meal = ""
@@ -237,7 +329,6 @@ class OrderFragment(num: String):Fragment(){
         }*/
 
 
-        val name = num
         if (tv_num != null) {
             //Log.e("num",name)
             tv_num.text = "桌號:"+" "+this.num
@@ -295,9 +386,25 @@ class OrderFragment(num: String):Fragment(){
 
             }
         }
-        for (i in radioButtonList){
-            i.isChecked = false
-            i.toggle()
+
+    }
+    fun initMealState(){
+        Log.e("call initMealState()",true.toString())
+        if (initMeal == 0){
+
+            rg.clearCheck()
+            initMeal++
+        }
+    }
+    fun initSideDishState(){
+        Log.e("call initSideDishState()",true.toString())
+        if (initSideDish == 0){
+            for (i in checkBoxList){
+                i.isChecked = true
+                Log.e("checkBoxElement",i.toString())
+                i.toggle()
+            }
+            initSideDish++
         }
     }
     fun str2int(str: String): Int{
