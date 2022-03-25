@@ -389,7 +389,6 @@ class OrderFragment(num: String):Fragment(){
 
     }
     fun initMealState(){
-        Log.e("call initMealState()",true.toString())
         if (initMeal == 0){
 
             rg.clearCheck()
@@ -397,7 +396,6 @@ class OrderFragment(num: String):Fragment(){
         }
     }
     fun initSideDishState(){
-        Log.e("call initSideDishState()",true.toString())
         if (initSideDish == 0){
             for (i in checkBoxList){
                 i.isChecked = true
