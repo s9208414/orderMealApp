@@ -382,6 +382,26 @@ class MenuFragment(num: String):Fragment(){
                     var b = Bundle()
                     //b.putString("num",this.num)
                     b.putString("meal",this.meal)
+                    tempOrderRef.child(num).addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {}
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (i in dataSnapshot.children){
+                                    if (meal == i.key){
+                                        val value = i.value
+                                        val childUpdates = hashMapOf<String, Any>(
+                                            "${sideDishFromBase.name}" to i.value
+                                        )
+                                    }
+
+                                }
+
+                            }
+                        }
+
+                    })
+
+                    tempOrderRef.child(num).updateChildren(childUpdates)
                     var sideDishList = ArrayList<String>()
                     this.sideDish.forEach{
                             item -> sideDishList.add(item)
