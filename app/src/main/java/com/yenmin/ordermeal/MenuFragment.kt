@@ -1,6 +1,7 @@
 package com.yenmin.ordermeal
 
 import android.content.Context
+import android.icu.number.IntegerWidth
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -44,7 +45,7 @@ class MenuFragment(num: String):Fragment(){
     var initMeal = 0
     var initSideDish = 0
     lateinit var rg:RadioGroup
-    var setNum = false
+    var initTo0 = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -69,22 +70,27 @@ class MenuFragment(num: String):Fragment(){
         sideDishRef = database.getReference("sideDish")
         tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
-        tempOrderRef.addListenerForSingleValueEvent(object : ValueEventListener {
+
+
+        val childUpdates = hashMapOf<String, Any>(
+            "id" to 0
+        )
+        tempOrderRef.child(num).updateChildren(childUpdates)
+
+        tempOrderRef.child(num).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
-                        if (num == i.key){
-                            setNum = true
-                            break
-                        }else{
-                            setNum = false
+                        if (i.key == "status"){
+                            if (i.value.toString() == "空桌"){
+                                initTo0 = true
+                            }
                         }
+                        Log.e("i.value",i.value.toString())
                     }
-
                 }
             }
-
         })
 
 
@@ -98,12 +104,14 @@ class MenuFragment(num: String):Fragment(){
                         var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
                         mealList.add(mealFromBase)
                         supplyMealList.add(mealFromBase.supply)
-                        if (setNum == false){
+                        if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${mealFromBase.name}" to 0
                             )
-                            tempOrderRef.child(num).updateChildren(childUpdates)
+                            tempOrderRef.child(num).child("meal").updateChildren(childUpdates)
                         }
+
+
                         radioButton.id = str2int("cb_meal_${i.key}")
                         radioButtonIdList.add(radioButton.id)
                         radioButton.text = mealFromBase.name
@@ -155,12 +163,15 @@ class MenuFragment(num: String):Fragment(){
                         var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
                         sideDishList.add(sideDishFromBase)
                         supplySideDishList.add(sideDishFromBase.supply)
-                        if (setNum == false){
+
+                        if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${sideDishFromBase.name}" to 0
                             )
-                            tempOrderRef.child(num).updateChildren(childUpdates)
+                            tempOrderRef.child(num).child("sideDish").updateChildren(childUpdates)
                         }
+
+
                         checkBox.id = str2int("cb_sideDish_${i.key}")
 
                         checkBox.text = sideDishFromBase.name
@@ -382,16 +393,19 @@ class MenuFragment(num: String):Fragment(){
                     var b = Bundle()
                     //b.putString("num",this.num)
                     b.putString("meal",this.meal)
-                    tempOrderRef.child(num).addListenerForSingleValueEvent(object : ValueEventListener {
+                    tempOrderRef.child(num).child("meal").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {}
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             if (dataSnapshot.exists()) {
                                 for (i in dataSnapshot.children){
                                     if (meal == i.key){
-                                        val value = i.value
+                                        var value = Integer.parseInt(i.value.toString())
+                                        value+=1
+                                        Log.e("value",value.toString())
                                         val childUpdates = hashMapOf<String, Any>(
-                                            "${sideDishFromBase.name}" to i.value
+                                            "${meal}" to value
                                         )
+                                        tempOrderRef.child(num).child("meal").updateChildren(childUpdates)
                                     }
 
                                 }
@@ -401,12 +415,38 @@ class MenuFragment(num: String):Fragment(){
 
                     })
 
-                    tempOrderRef.child(num).updateChildren(childUpdates)
+
                     var sideDishList = ArrayList<String>()
                     this.sideDish.forEach{
                             item -> sideDishList.add(item)
                     }
                     b.putStringArrayList("sideDish",sideDishList)
+
+                    tempOrderRef.child(num).child("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
+                        override fun onCancelled(p0: DatabaseError) {}
+                        override fun onDataChange(dataSnapshot: DataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                for (i in dataSnapshot.children){
+                                    for (j in sideDish){
+                                        if (j == i.key){
+                                            var value = Integer.parseInt(i.value.toString())
+                                            value+=1
+                                            Log.e("value",value.toString())
+                                            val childUpdates = hashMapOf<String, Any>(
+                                                "$j" to value
+                                            )
+                                            tempOrderRef.child(num).child("sideDish").updateChildren(childUpdates)
+                                        }
+                                    }
+
+
+                                }
+
+                            }
+                        }
+
+                    })
+
 
                     // Use the Kotlin extension in the fragment-ktx artifact
                     fragmentManager?.setFragmentResult("toCart", b)
@@ -465,5 +505,13 @@ class MenuFragment(num: String):Fragment(){
         super.onAttach(context)
         //sm = context as SendMessages
     }
+}
+
+private operator fun Any?.plus(i: Int) {
+
+}
+
+private operator fun Any?.minus(i: Int) {
+
 }
 

@@ -18,6 +18,7 @@ class OrderFragment(num: String) :Fragment(){
     private lateinit var database: FirebaseDatabase
     private lateinit var mealRef: DatabaseReference
     private lateinit var sideDishRef: DatabaseReference
+    private lateinit var tempOrderRef: DatabaseReference
     var num = num
     var space = 50
     lateinit var meal: String
@@ -65,6 +66,7 @@ class OrderFragment(num: String) :Fragment(){
         database = FirebaseDatabase.getInstance()
         mealRef = database.getReference("meal")
         sideDishRef = database.getReference("sideDish")
+        tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
         /*if (rv_meal != null) {
             rv_meal.addItemDecoration(RecyclerViewItemSpace(space))
@@ -98,61 +100,57 @@ class OrderFragment(num: String) :Fragment(){
         if (tv_num != null) {
             tv_num.text = "桌號:"+" "+this.num
         }
+        tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
 
-        /*mealRef.addListenerForSingleValueEvent(object : ValueEventListener {
+                        if (orderMeal.isEmpty()){
+                            for (i in dataSnapshot.children){
+                                orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            }
+                        }else{
+                            for (i in dataSnapshot.children){
+                                for (j in orderMeal){
+                                    if (i.key == j.name){
+                                        j.number = Integer.parseInt(i.value.toString())
+                                        break
+                                    }else{
+                                        continue
+                                        //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    }
+                                    orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    break
+                                }
+                            }
+                        }
+
+                        mealadapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        )
+
+
+        tempOrderRef.child(num).child("sideDish").addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
-                        //在這裡依序動態建立RadioButton
-                        val radioButton = RadioButton(requireActivity())
-                        var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
-                        mealList.add(mealFromBase)
-                        supplyMealList.add(mealFromBase.supply)
-                        radioButton.id = str2int("cb_meal_${i.key}")
-                        radioButtonIdList.add(radioButton.id)
-                        radioButton.text = mealFromBase.name
-                        radioButton.layoutParams = ConstraintLayout.LayoutParams(
-                            ConstraintLayout.LayoutParams.WRAP_CONTENT,
-                            ConstraintLayout.LayoutParams.WRAP_CONTENT)
-                        for (i in mealList){
-                            if(i.supply == true){
-                                radioButton.text = mealFromBase.name
-                                radioButton.isEnabled = true
-                                radioButton.toggle()
-                            }else{
-                                radioButton.text = mealFromBase.name + " (售罄)"
-                                radioButton.isEnabled = false
-                                radioButton.toggle()
-                            }
-                        }
-                        radioButton.setOnCheckedChangeListener { buttonView, ischecked ->
-                            if (ischecked == true){
-                                meal = mealFromBase.name
-                                Log.e("meal",meal)
-                            }else if(ischecked == false){
-                                //Log.e("$meal","未勾選")
-                            }
-                        }
-                        if (rg != null) {
-                            rg.addView(radioButton)
-                        }
-                        radioButtonList.add(radioButton)
-
-
-
+                        orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
                     }
-                    initMealState()
-                    Log.e("meal",meal)
+                    sidedishadapter.notifyDataSetChanged()
                 }
             }
-        })*/
+        }
+        )
 
 
 
 
 
-        fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
+
+        /*fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
             meal = bundle.getString("meal").toString()
             sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
             if(meal in mealMap.keys){
@@ -202,7 +200,7 @@ class OrderFragment(num: String) :Fragment(){
             Log.e("orderMealListSize", orderMeal.size.toString())
             Log.e("sideDishListSize", orderSideDish.size.toString())
             Log.e("已執行到加到購物車","true")
-        }
+        }*/
 
 
     }
