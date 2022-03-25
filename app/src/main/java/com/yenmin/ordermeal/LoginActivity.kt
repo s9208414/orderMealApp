@@ -111,6 +111,7 @@ class LoginActivity : AppCompatActivity() {
                         customerLogin = true
                         name = i.name
                         number = i.number
+                        break
 
                     }else{
                         customerLogin = false

@@ -266,6 +266,8 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                 )
                 sideDishRef.child((sideDishList.indexOf(i)+1).toString()).updateChildren(childUpdates)
             }
+
+
         }
 
 

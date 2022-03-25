@@ -3,27 +3,19 @@ package com.yenmin.ordermeal
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.view.View
-import android.view.ViewGroup
-import android.widget.*
-import androidx.core.os.bundleOf
-import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.ViewPager
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentPagerAdapter
 import androidx.fragment.app.FragmentStatePagerAdapter
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
-    private val FragmentTitleList: List<String> = listOf("菜單","購物車")
+    private val FragmentTitleList: List<String> = listOf("菜單","訂單")
     lateinit var num : String
     var switch : Boolean = false
     lateinit var myViewPagerAdapter:MyViewPagerAdapter
     lateinit var pager:ViewPager
-    lateinit var fg1:OrderFragment
-    lateinit var fg2:CartFragment
+    lateinit var fg1:MenuFragment
+    lateinit var fg2:OrderFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,8 +28,8 @@ class MainActivity : AppCompatActivity() {
         intent?.extras?.let{
             num = it.getInt("number").toString()
             Log.e("tablenum",num)
-            fg2 = CartFragment(num)
-            fg1 = OrderFragment(num)
+            fg2 = OrderFragment(num)
+            fg1 = MenuFragment(num)
             /*pager.adapter = ViewPagerAdapter(supportFragmentManager,lifecycle,num)
             supportFragmentManager.beginTransaction().commit()*/
             myViewPagerAdapter = MyViewPagerAdapter(supportFragmentManager,num,fg1,fg2)
@@ -71,11 +63,11 @@ class MainActivity : AppCompatActivity() {
 
 
 }
-class MyViewPagerAdapter(fm: FragmentManager,num : String,fg1: OrderFragment,fg2: CartFragment) : FragmentStatePagerAdapter(fm){
+class MyViewPagerAdapter(fm: FragmentManager, num : String, fg1: MenuFragment, fg2: OrderFragment) : FragmentStatePagerAdapter(fm){
     var num = num
     val fg1 = fg1
     val fg2 = fg2
-    private val FragmentTitleList: List<String> = listOf("菜單","購物車")
+    private val FragmentTitleList: List<String> = listOf("菜單","訂單")
     override fun getCount() = 2
 
     override fun getItem(position: Int) = when(position){

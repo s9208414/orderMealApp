@@ -18,9 +18,9 @@ class ViewPagerAdapter(fragmentManager: FragmentManager, lifecycle: Lifecycle,nu
     override fun createFragment(position: Int): Fragment {
 
         when(position){
-            0 -> return OrderFragment(num)
+            0 -> return MenuFragment(num)
             1 -> return CartFragment(num)
-            else -> return OrderFragment(num)
+            else -> return MenuFragment(num)
         }
     }*/
 
