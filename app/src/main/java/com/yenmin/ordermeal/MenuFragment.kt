@@ -87,7 +87,7 @@ class MenuFragment(num: String):Fragment(){
                             if (i.value.toString() == "空桌"){
                                 initTo0 = true
                                 val childUpdates = hashMapOf<String, Any>(
-                                    "status" to "用餐中"
+                                    "status" to "使用中"
                                 )
                                 tempOrderRef.child(num).updateChildren(childUpdates)
                             }else{

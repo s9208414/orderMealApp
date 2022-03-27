@@ -1,5 +1,6 @@
 package com.yenmin.ordermeal
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -37,6 +38,7 @@ class OrderFragment(num: String) :Fragment(){
     private var orderSideDish = ArrayList<Order>()
     private var order = ArrayList<Order>()
     lateinit var decoration:RecyclerViewItemSpace
+    private lateinit var btn_sendOrder:Button
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         decoration = RecyclerViewItemSpace()
@@ -54,6 +56,7 @@ class OrderFragment(num: String) :Fragment(){
     }
 
 
+    @SuppressLint("UseRequireInsteadOfGet")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //Log.e("CartFragment","onViewCreated")
@@ -61,7 +64,7 @@ class OrderFragment(num: String) :Fragment(){
         var tv_sideDish = getView()?.findViewById<TextView>(R.id.tv_sideDish)
         val rv_meal = getView()?.findViewById<RecyclerView>(R.id.rv_meal)
         val rv_sideDish = getView()?.findViewById<RecyclerView>(R.id.rv_sideDish)
-        val btn_sendOrder = getView()?.findViewById<Button>(R.id.btn_sendOrder)
+        btn_sendOrder = getView()?.findViewById<Button>(R.id.btn_sendOrder)!!
         var tv_num = getView()?.findViewById<TextView>(R.id.tv_num)
 
         database = FirebaseDatabase.getInstance()
@@ -78,6 +81,7 @@ class OrderFragment(num: String) :Fragment(){
         //創建 MyRecyclerAdapter 並連結 recyclerView
         mealadapter = MealRecyclerAdapter(orderMeal,num)
         sidedishadapter = SideDishRecyclerAdapter(orderSideDish,num)
+
         if (rv_meal != null) {
             rv_meal.addItemDecoration(decoration)
             rv_meal.layoutManager = LinearLayoutManager(requireActivity())
@@ -162,7 +166,20 @@ class OrderFragment(num: String) :Fragment(){
         }
         )
 
+        btn_sendOrder.setOnClickListener {
 
+            val childUpdates = hashMapOf<String, Any>(
+                "order" to "已送出"
+            )
+            database.getReference("temp_order").child(num).updateChildren(childUpdates).addOnSuccessListener {
+                btn_sendOrder.isEnabled = false
+                Toast.makeText(requireActivity(),"訂單送出成功",Toast.LENGTH_SHORT)
+            }.addOnFailureListener {
+                Toast.makeText(requireActivity(),"訂單送出失敗",Toast.LENGTH_SHORT)
+            }
+
+
+        }
 
 
 
