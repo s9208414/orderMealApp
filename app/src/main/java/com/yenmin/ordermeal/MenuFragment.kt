@@ -61,7 +61,7 @@ class MenuFragment(num: String):Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("MenuFragment","onViewCreated")
+        //Log.e("MenuFragment","onViewCreated")
         tv_sideDish = requireView().findViewById(R.id.tv_sideDish)
         btn_add2Cart = requireView().findViewById(R.id.btn_add2Cart)
         rg = requireView().findViewById(R.id.radioGroup)
@@ -73,7 +73,7 @@ class MenuFragment(num: String):Fragment(){
 
 
         val childUpdates = hashMapOf<String, Any>(
-            "id" to 0
+            "id" to num
         )
         tempOrderRef.child(num).updateChildren(childUpdates)
 
@@ -82,12 +82,19 @@ class MenuFragment(num: String):Fragment(){
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
+                        //到時候status要從店家那邊設定，這邊暫時先在firebase直接新增status欄位並設定成空桌
                         if (i.key == "status"){
                             if (i.value.toString() == "空桌"){
                                 initTo0 = true
+                                val childUpdates = hashMapOf<String, Any>(
+                                    "status" to "用餐中"
+                                )
+                                tempOrderRef.child(num).updateChildren(childUpdates)
+                            }else{
+                                initTo0 = false
                             }
                         }
-                        Log.e("i.value",i.value.toString())
+                        //Log.e("i.value",i.value.toString())
                     }
                 }
             }
@@ -132,7 +139,7 @@ class MenuFragment(num: String):Fragment(){
                         radioButton.setOnCheckedChangeListener { buttonView, ischecked ->
                             if (ischecked == true){
                                 meal = mealFromBase.name
-                                Log.e("meal",meal)
+                                //Log.e("meal",meal)
                             }else if(ischecked == false){
                                 //Log.e("$meal","未勾選")
                             }
@@ -146,7 +153,7 @@ class MenuFragment(num: String):Fragment(){
 
                     }
                     initMealState()
-                    Log.e("meal",meal)
+                    //Log.e("meal",meal)
                 }
             }
         })
@@ -175,13 +182,13 @@ class MenuFragment(num: String):Fragment(){
                         checkBox.id = str2int("cb_sideDish_${i.key}")
 
                         checkBox.text = sideDishFromBase.name
-                        Log.e("checkBox.id",checkBox.id.toString())
+                        //Log.e("checkBox.id",checkBox.id.toString())
 
                         checkBox.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.MATCH_PARENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
                         //checkBox.background = R.drawable.ic_baseline_clear_24
                         val checkBox_params = checkBox.layoutParams as? ConstraintLayout.LayoutParams
                         if (checkBox_params != null) {
-                            Log.e("checkBox_params",checkBox_params.toString())
+                            //Log.e("checkBox_params",checkBox_params.toString())
                             checkBox_params.setMargins(30)
                         }
 
@@ -216,13 +223,13 @@ class MenuFragment(num: String):Fragment(){
                                 if(sideDishFromBase.name !in sideDish){
                                     sideDish.add(sideDishFromBase.name)
                                     //Toast.makeText(requireActivity(),"目前已選擇:$sideDish",Toast.LENGTH_SHORT).show()
-                                    Log.e("sideDish",sideDish.toString())
+                                    //Log.e("sideDish",sideDish.toString())
                                 }
                             }else if(!ischecked){
                                 if(sideDishFromBase.name in sideDish){
                                     sideDish.remove(sideDishFromBase.name)
                                     //Toast.makeText(requireActivity(),"目前已選擇:$sideDish",Toast.LENGTH_SHORT).show()
-                                    Log.e("sideDish",sideDish.toString())
+                                    //Log.e("sideDish",sideDish.toString())
                                 }
                             }
 
@@ -232,7 +239,7 @@ class MenuFragment(num: String):Fragment(){
                         if (fragment_order != null) {
                             fragment_order.addView(checkBox)
                         }
-                        Log.e("id",checkBox.id.toString())
+                        //Log.e("id",checkBox.id.toString())
                         checkBoxList.add(checkBox)
                         recordLastCheckBoxId = checkBox.id
                     }
@@ -240,9 +247,9 @@ class MenuFragment(num: String):Fragment(){
                     val btn_add2Cart_params = btn_add2Cart.layoutParams as ConstraintLayout.LayoutParams
                     btn_add2Cart_params.topToBottom = recordLastCheckBoxId
                     btn_add2Cart_params.startToStart = recordLastCheckBoxId
-                    Log.e("recordLastCheckBoxId",recordLastCheckBoxId.toString())
+                    //Log.e("recordLastCheckBoxId",recordLastCheckBoxId.toString())
                     btn_add2Cart.requestLayout()
-                    Log.e("sideDish",sideDish.toString())
+                    //Log.e("sideDish",sideDish.toString())
                 }
             }
         })

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -47,7 +48,7 @@ class OrderFragment(num: String) :Fragment(){
         savedInstanceState: Bundle?
     ): View? {
 
-        Log.e("CartFragment","onCreateView")
+        //Log.e("CartFragment","onCreateView")
 
         return inflater.inflate(R.layout.fragment_order,container,false)
     }
@@ -55,7 +56,7 @@ class OrderFragment(num: String) :Fragment(){
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.e("CartFragment","onViewCreated")
+        //Log.e("CartFragment","onViewCreated")
         var tv_meal = getView()?.findViewById<TextView>(R.id.tv_meal)
         var tv_sideDish = getView()?.findViewById<TextView>(R.id.tv_sideDish)
         val rv_meal = getView()?.findViewById<RecyclerView>(R.id.rv_meal)
@@ -75,8 +76,8 @@ class OrderFragment(num: String) :Fragment(){
             rv_sideDish.addItemDecoration(RecyclerViewItemSpace(space))
         }*/
         //創建 MyRecyclerAdapter 並連結 recyclerView
-        mealadapter = MealRecyclerAdapter(orderMeal)
-        sidedishadapter = SideDishRecyclerAdapter(orderSideDish)
+        mealadapter = MealRecyclerAdapter(orderMeal,num)
+        sidedishadapter = SideDishRecyclerAdapter(orderSideDish,num)
         if (rv_meal != null) {
             rv_meal.addItemDecoration(decoration)
             rv_meal.layoutManager = LinearLayoutManager(requireActivity())
@@ -104,8 +105,7 @@ class OrderFragment(num: String) :Fragment(){
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
-
-                        if (orderMeal.isEmpty()){
+                        if (orderMeal.size < dataSnapshot.children.count()){
                             for (i in dataSnapshot.children){
                                 orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
                             }
@@ -136,9 +136,26 @@ class OrderFragment(num: String) :Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    for (i in dataSnapshot.children){
-                        orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                    if (orderSideDish.size < dataSnapshot.children.count()){
+                        for (i in dataSnapshot.children){
+                            orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                        }
+                    }else{
+                        for (i in dataSnapshot.children){
+                            for (j in orderSideDish){
+                                if (i.key == j.name){
+                                    j.number = Integer.parseInt(i.value.toString())
+                                    break
+                                }else{
+                                    continue
+                                    //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                }
+                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                break
+                            }
+                        }
                     }
+
                     sidedishadapter.notifyDataSetChanged()
                 }
             }
@@ -207,7 +224,7 @@ class OrderFragment(num: String) :Fragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Log.e("CartFragment","onActivityCreated")
+        //Log.e("CartFragment","onActivityCreated")
         /*try {
             meal = arguments?.get("meal") as String
             sideDish = arguments?.get("sideDish") as ArrayList<String>
@@ -248,7 +265,7 @@ class OrderFragment(num: String) :Fragment(){
 
     override fun onStart() {
         super.onStart()
-        Log.e("CartFragment","onStart")
+        //Log.e("CartFragment","onStart")
     }
 }
 data class Order(
