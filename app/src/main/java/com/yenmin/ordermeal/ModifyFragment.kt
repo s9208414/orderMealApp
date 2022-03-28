@@ -8,9 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.TextView
+import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setMargins
 import androidx.fragment.app.Fragment
@@ -19,6 +17,7 @@ import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
 import com.google.gson.Gson
 import com.google.gson.annotations.SerializedName
+import java.lang.Exception
 import java.text.FieldPosition
 
 class ModifyFragment(num_manger: String, position: String): Fragment() {
@@ -33,8 +32,10 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
     lateinit var tv_sideDish: TextView
     var mealList = mutableListOf<Meal>()
     var supplyMealList = mutableListOf<Boolean>()
+    var priceMealList = mutableListOf<Int>()
     var sideDishList = mutableListOf<SideDish>()
     var supplySideDishList = mutableListOf<Boolean>()
+    var priceSideDishList = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -146,13 +147,61 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
 
                         }
 
+                        //在這裡依序建立editPrice
+                        val editPrice = EditText(requireActivity())
+                        priceMealList.add(meal.price)
+                        editPrice.id = str2int("et_meal_${i.key}")
+                        editPrice.hint = "目前價格: ${meal.price.toString()}"
+                        editPrice.textSize = 10F
+                        editPrice.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                        val editPrice_params = editPrice.layoutParams as? ConstraintLayout.LayoutParams
+                        if (editPrice_params != null) {
+                            Log.e("editPrice_params",editPrice_params.toString())
+                            editPrice_params.setMargins(20)
+                        }
+                        if (editPrice_params != null) {
+                            if (tv_num_manager != null) {
+                                editPrice_params.startToEnd = tv_num_manager.id
+                            }
+                        }
+                        if (fragment_modify != null) {
+                            if (editPrice_params != null) {
+                                editPrice_params.endToEnd = fragment_modify.id
+                            }
+                        }
+                        if(i.key == "1"){
+                            if (editPrice_params != null) {
+                                editPrice_params.topToBottom = tv_meal.id
+                            }
+                        }else{
+                            val temp  = i.key?.toInt()?.minus(1)
+                            if (editPrice_params != null) {
+                                //checkBox_params.topToBottom = getResources().getIdentifier("cb_meal_$temp", "id", activity?.getPackageName())
+                                editPrice_params.topToBottom = recordLastCheckBoxId
+                            }
+                        }
+                        editPrice.setOnFocusChangeListener { view, b ->
+
+                            if (b == false){
+                                mealList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
+                            }else{
+                                mealList[i.key?.toInt()!!-1].price = meal.price
+                            }
+
+
+                        }
+
+                        editPrice.requestLayout()
                         checkBox.requestLayout()
                         if (fragment_modify != null) {
                             fragment_modify.addView(checkBox)
+                            fragment_modify.addView(editPrice)
                         }
                         Log.e("id",checkBox.id.toString())
 
                         recordLastCheckBoxId = checkBox.id
+
+
                     }
                     val tv_sideDish_params = tv_sideDish.layoutParams as ConstraintLayout.LayoutParams
                     tv_sideDish_params.topToBottom = recordLastCheckBoxId
@@ -232,10 +281,51 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                             }
 
                         }
+                        //在這裡依序建立editPrice
+                        val editPrice = EditText(requireActivity())
+                        priceSideDishList.add(sideDish.price)
+                        editPrice.id = str2int("et_sideDish_${i.key}")
+                        editPrice.hint = "目前價格: ${sideDish.price.toString()}"
+                        editPrice.textSize = 10F
+                        editPrice.layoutParams = ConstraintLayout.LayoutParams(ConstraintLayout.LayoutParams.WRAP_CONTENT,ConstraintLayout.LayoutParams.WRAP_CONTENT)
+                        val editPrice_params = editPrice.layoutParams as? ConstraintLayout.LayoutParams
+                        if (editPrice_params != null) {
+                            Log.e("editPrice_params",editPrice_params.toString())
+                            editPrice_params.setMargins(20)
+                        }
+                        if (editPrice_params != null) {
+                            if (tv_num_manager != null) {
+                                editPrice_params.startToEnd = tv_num_manager.id
+                            }
+                        }
+                        if (fragment_modify != null) {
+                            if (editPrice_params != null) {
+                                editPrice_params.endToEnd = fragment_modify.id
+                            }
+                        }
+                        if(i.key == "1"){
+                            if (editPrice_params != null) {
+                                editPrice_params.topToBottom = tv_sideDish.id
+                            }
+                        }else{
+                            val temp  = i.key?.toInt()?.minus(1)
+                            if (editPrice_params != null) {
+                                //checkBox_params.topToBottom = getResources().getIdentifier("cb_meal_$temp", "id", activity?.getPackageName())
+                                editPrice_params.topToBottom = recordLastCheckBoxId
+                            }
+                        }
+                        editPrice.setOnFocusChangeListener { view, b ->
+                            if (b == false){
+                                mealList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
+                            }
+                        }
+
+                        editPrice.requestLayout()
 
                         checkBox.requestLayout()
                         if (fragment_modify != null) {
                             fragment_modify.addView(checkBox)
+                            fragment_modify.addView(editPrice)
                         }
                         Log.e("id",checkBox.id.toString())
 
@@ -252,17 +342,21 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
         btn_modify.setOnClickListener {
             for (i in mealList){
                 val supplyValues = i.getSupply()
+                val priceValues = i.getPrice()
 
                 val childUpdates = hashMapOf<String, Any>(
-                    "supply" to supplyValues
+                    "supply" to supplyValues,
+                    "price" to priceValues
                 )
                 mealRef.child((mealList.indexOf(i)+1).toString()).updateChildren(childUpdates)
             }
             for (i in sideDishList){
                 val supplyValues = i.getSupply()
+                val priceValues = i.getPrice()
 
                 val childUpdates = hashMapOf<String, Any>(
-                    "supply" to supplyValues
+                    "supply" to supplyValues,
+                    "price" to priceValues
                 )
                 sideDishRef.child((sideDishList.indexOf(i)+1).toString()).updateChildren(childUpdates)
             }
@@ -287,13 +381,20 @@ data class Meal(
     @SerializedName("number")
     var number: Int,
     @SerializedName("supply")
-    var supply: Boolean
+    var supply: Boolean,
+    @SerializedName("price")
+    var price: Int,
 
 ){
     @JvmName("getSupply1")
     @Exclude
     fun getSupply():Boolean{
         return supply
+    }
+    @JvmName("getPrice1")
+    @Exclude
+    fun getPrice():Int{
+        return price
     }
 }
 data class SideDish(
@@ -302,12 +403,19 @@ data class SideDish(
     @SerializedName("number")
     var number: Int,
     @SerializedName("supply")
-    var supply: Boolean
+    var supply: Boolean,
+    @SerializedName("price")
+    var price: Int,
 ){
     @JvmName("getSupply2")
     @Exclude
     fun getSupply():Boolean{
         return supply
+    }
+    @JvmName("getPrice2")
+    @Exclude
+    fun getPrice():Int{
+        return price
     }
 }
 
