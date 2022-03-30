@@ -3,7 +3,9 @@ package com.yenmin.ordermeal
 import android.annotation.SuppressLint
 import android.app.ActionBar
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils.indexOf
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setMargins
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
@@ -180,16 +183,24 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                                 editPrice_params.topToBottom = recordLastCheckBoxId
                             }
                         }
-                        editPrice.setOnFocusChangeListener { view, b ->
 
-                            if (b == false){
-                                mealList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
-                            }else{
-                                mealList[i.key?.toInt()!!-1].price = meal.price
+                        editPrice.addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(s: Editable?) {
+                                if (editPrice.text.isNotEmpty()){
+                                    mealList[i.key?.toInt()!!-1].price = Integer.parseInt(editPrice.text.toString())
+                                    Log.e("afterTextChanged_mealList",mealList.toString())
+                                }
+
                             }
 
+                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                                mealList[i.key?.toInt()!!-1].price = meal.price
+                                Log.e("beforeTextChanged_mealList",mealList.toString())
+                            }
 
-                        }
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                            }
+                        })
 
                         editPrice.requestLayout()
                         checkBox.requestLayout()
@@ -314,11 +325,23 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                                 editPrice_params.topToBottom = recordLastCheckBoxId
                             }
                         }
-                        editPrice.setOnFocusChangeListener { view, b ->
-                            if (b == false){
-                                mealList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
+                        editPrice.addTextChangedListener(object : TextWatcher {
+                            override fun afterTextChanged(s: Editable?) {
+                                if (editPrice.text.isNotEmpty()){
+                                    sideDishList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
+                                    Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
+                                }
+
                             }
-                        }
+
+                            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                                sideDishList[i.key?.toInt()!!-1].price = sideDish.price
+                                Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
+                            }
+
+                            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                            }
+                        })
 
                         editPrice.requestLayout()
 
@@ -348,6 +371,7 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                     "supply" to supplyValues,
                     "price" to priceValues
                 )
+                Log.e("mealList",mealList.toString())
                 mealRef.child((mealList.indexOf(i)+1).toString()).updateChildren(childUpdates)
             }
             for (i in sideDishList){
