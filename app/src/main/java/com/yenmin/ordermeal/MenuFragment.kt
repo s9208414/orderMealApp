@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import com.google.gson.Gson
+import java.util.ArrayList
 
 class MenuFragment(num: String):Fragment(){
     private lateinit var database: FirebaseDatabase
@@ -48,7 +49,9 @@ class MenuFragment(num: String):Fragment(){
     var initTo0 = false
     var priceMealList = mutableListOf<Int>()
     var priceSideDishList = mutableListOf<Int>()
-    lateinit var b : Bundle
+    var b = Bundle()
+    var mealNamePrice = mutableListOf<List<String>>()
+    var sideDishNamePrice = mutableListOf<List<String>>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -84,7 +87,6 @@ class MenuFragment(num: String):Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    b = Bundle()
                     for (i in dataSnapshot.children){
                         //到時候status要從店家那邊設定，這邊暫時先在firebase直接新增status欄位並設定成空桌
                         if (i.key == "status"){
@@ -116,13 +118,14 @@ class MenuFragment(num: String):Fragment(){
                         mealList.add(mealFromBase)
                         supplyMealList.add(mealFromBase.supply)
                         priceMealList.add(mealFromBase.price)
+                        var list = listOf<String>(mealFromBase.name,mealFromBase.price.toString())
+                        mealNamePrice.add(list)
                         if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${mealFromBase.name}" to 0
                             )
                             tempOrderRef.child(num).child("meal").updateChildren(childUpdates)
                         }
-
 
                         radioButton.id = str2int("cb_meal_${i.key}")
                         radioButtonIdList.add(radioButton.id)
@@ -154,9 +157,15 @@ class MenuFragment(num: String):Fragment(){
                         }
                         radioButtonList.add(radioButton)
 
-                        b.
+
 
                     }
+                    /*var tempList = ArrayList<List<String>>()
+                    mealNamePrice.forEach(){
+                        i -> tempList.add(i)
+                    }*/
+                    //b.putParcelableArrayList("mealName&Price",tempList)
+                    //b.putParcelableArrayList("mealName&Price",tempList)
                     initMealState()
                     //Log.e("meal",meal)
                 }
@@ -176,6 +185,8 @@ class MenuFragment(num: String):Fragment(){
                         sideDishList.add(sideDishFromBase)
                         supplySideDishList.add(sideDishFromBase.supply)
                         priceSideDishList.add(sideDishFromBase.price)
+                        var list = listOf<String>(sideDishFromBase.name,sideDishFromBase.price.toString())
+                        sideDishNamePrice.add(list)
                         if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${sideDishFromBase.name}" to 0
@@ -248,6 +259,14 @@ class MenuFragment(num: String):Fragment(){
                         checkBoxList.add(checkBox)
                         recordLastCheckBoxId = checkBox.id
                     }
+                    /*var tempList = ArrayList<Int>()
+                    priceSideDishList.forEach(){
+                            i -> tempList.add(i)
+                    }
+                    b.putIntegerArrayList("priceSideDish",tempList)
+                    fragmentManager?.setFragmentResult("toCart", b)
+                    val mainActivity = activity as MainActivity
+                    Log.e("mealList",mealList.toString())*/
                     initSideDishState()
                     val btn_add2Cart_params = btn_add2Cart.layoutParams as ConstraintLayout.LayoutParams
                     btn_add2Cart_params.topToBottom = recordLastCheckBoxId
@@ -258,9 +277,9 @@ class MenuFragment(num: String):Fragment(){
                 }
             }
         })
-        var b = Bundle()
+        //var b = Bundle()
         //b.putString("num",this.num)
-        var mealList = ArrayList<Int>()
+        /*var mealList = ArrayList<Int>()
         priceMealList.forEach{
                 item -> mealList.add(item)
         }
@@ -272,7 +291,7 @@ class MenuFragment(num: String):Fragment(){
         b.putIntegerArrayList("priceSideDish",sideDishList)
         fragmentManager?.setFragmentResult("toCart", b)
         val mainActivity = activity as MainActivity
-        Log.e("mealList",mealList.toString())
+        Log.e("mealList",mealList.toString())*/
 
 
 
@@ -479,7 +498,7 @@ class MenuFragment(num: String):Fragment(){
 
                     // Use the Kotlin extension in the fragment-ktx artifact
                     //fragmentManager?.setFragmentResult("toCart", b)
-                    //val mainActivity = activity as MainActivity
+                    val mainActivity = activity as MainActivity
                     mainActivity.switch2Cart(isadded)
 
                 }else if(meal == "" || sideDish.isEmpty()){
@@ -536,6 +555,8 @@ class MenuFragment(num: String):Fragment(){
     }
 }
 
+
+
 private operator fun Any?.plus(i: Int) {
 
 }
@@ -543,4 +564,8 @@ private operator fun Any?.plus(i: Int) {
 private operator fun Any?.minus(i: Int) {
 
 }
+data class price(
+    val name: String,
+    val price: Int
+)
 

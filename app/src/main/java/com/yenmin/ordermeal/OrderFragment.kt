@@ -28,9 +28,11 @@ class OrderFragment(num: String) :Fragment(){
     //接著宣告兩個arraylist，一個用來裝meal的名字，另一個用來裝sideDish的名字(裝之前先把從OrderFragment傳過來的list先flatten再裝)
     //lateinit var mealList:ArrayList<String>
     //lateinit var sideDishList:ArrayList<String>
-    var mealMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
+    //var mealMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
+    var mealMap = mutableMapOf<String,Int>()
     var mealIdxMap = mutableMapOf<String,Int>("牛排" to 0,"豬排" to 0,"魚排" to 0)
-    var sideDishMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
+    //var sideDishMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
+    var sideDishMap = mutableMapOf<String,Int>()
     var sideDishIdxMap = mutableMapOf<String,Int>("沙拉" to 0,"玉米濃湯" to 0,"馬鈴薯" to 0,"義大利麵" to 0)
     private lateinit var mealadapter: MealRecyclerAdapter
     private lateinit var sidedishadapter: SideDishRecyclerAdapter
@@ -41,6 +43,9 @@ class OrderFragment(num: String) :Fragment(){
     private lateinit var btn_sendOrder:Button
     private var priceMealList = ArrayList<Int>()
     private var priceSideDishList = ArrayList<Int>()
+    private var mealNamePrice = mutableMapOf<String,Int>()
+    private var sideDishNamePrice = mutableMapOf<String,Int>()
+    var sideDishMapSize = 0
     var sum = 0
     private lateinit var tv_sum: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -109,7 +114,29 @@ class OrderFragment(num: String) :Fragment(){
         if (tv_num != null) {
             tv_num.text = "桌號:"+" "+this.num
         }
-
+        database.getReference()
+        database.getReference("meal").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
+                        mealNamePrice.put(mealFromBase.name,mealFromBase.price)
+                    }
+                }
+            }
+        })
+        database.getReference("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
+                        sideDishNamePrice.put(sideDishFromBase.name,sideDishFromBase.price)
+                    }
+                }
+            }
+        })
         tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -133,15 +160,20 @@ class OrderFragment(num: String) :Fragment(){
                                 }
                             }
                         }
-                        if (priceMealList.isNotEmpty()){
-                            for (i in orderMeal){
-                                sum = i.number * priceMealList[orderMeal.indexOf(i)]
-                            }
-                            tv_sum.text = "總金額: $sum"
-                        }
 
                         mealadapter.notifyDataSetChanged()
                     }
+                    /*Log.e("orderMeal",orderMeal.toString())
+                    Log.e("priceMealList",priceMealList.toString())
+                    for (i in orderMeal){
+                        if (i.name in mealNamePrice.keys){
+                            sum = sum + i.number * mealNamePrice[i.name]!!
+                        }
+
+                    }
+                    tv_sum.text = "總金額: $sum"*/
+
+                    Log.e("sum",sum.toString())
                 }
             }
         )
@@ -151,9 +183,11 @@ class OrderFragment(num: String) :Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    if (orderSideDish.size < dataSnapshot.children.count()){
+                    /*if (orderSideDish.size < dataSnapshot.children.count()){
                         for (i in dataSnapshot.children){
                             orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            Log.e("sideDishCount", dataSnapshot.children.count().toString())
+                            Log.e("orderSideDish.size", orderSideDish.size.toString())
                         }
                     }else{
                         for (i in dataSnapshot.children){
@@ -169,16 +203,32 @@ class OrderFragment(num: String) :Fragment(){
                                 break
                             }
                         }
-                    }
-                    if (priceSideDishList.isNotEmpty()){
-                        for (i in orderSideDish){
-                            sum = i.number * priceSideDishList[orderSideDish.indexOf(i)]
+                    }*/
+                    for (i in dataSnapshot.children){
+                        Log.e("sideDish",i.toString())
+                        sideDishMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
+                        sideDishMapSize++
+                        Log.e("sideDishMap",sideDishMap.toString())
+                        for (j in sideDishMap){
+                            if (j.value == 0){
+                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            }
                         }
-                        tv_sum.text = "總金額: $sum"
                     }
 
                     sidedishadapter.notifyDataSetChanged()
                 }
+                /*Log.e("orderSideDish",orderSideDish.toString())
+                Log.e("priceSideDishList",priceSideDishList.toString())
+                for (i in orderSideDish){
+                    if (i.name in sideDishNamePrice.keys){
+                        sum = sum + i.number * sideDishNamePrice[i.name]!!
+                    }
+
+                }*/
+                tv_sum.text = "總金額: $sum"
+
+                Log.e("sum",sum.toString())
             }
         }
         )
@@ -304,11 +354,6 @@ class OrderFragment(num: String) :Fragment(){
         }
     }*/
 
-
-    override fun onStart() {
-        super.onStart()
-        //Log.e("CartFragment","onStart")
-    }
 }
 data class Order(
     val name: String,
