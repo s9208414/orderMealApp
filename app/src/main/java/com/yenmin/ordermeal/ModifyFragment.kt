@@ -2,6 +2,7 @@ package com.yenmin.ordermeal
 
 import android.annotation.SuppressLint
 import android.app.ActionBar
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils.indexOf
@@ -11,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.setMargins
 import androidx.core.widget.addTextChangedListener
@@ -83,6 +85,7 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
             override fun onCancelled(p0: DatabaseError) {}
             var recordLastCheckBoxId = 0
             val fragment_modify = getView()?.findViewById<ConstraintLayout>(R.id.fragment_modify)
+            @SuppressLint("SetTextI18n")
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
@@ -226,6 +229,7 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
             override fun onCancelled(p0: DatabaseError) {}
             var recordLastCheckBoxId = 0
             val fragment_modify = getView()?.findViewById<ConstraintLayout>(R.id.fragment_modify)
+            @RequiresApi(Build.VERSION_CODES.M)
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){

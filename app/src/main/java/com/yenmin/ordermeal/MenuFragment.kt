@@ -46,6 +46,9 @@ class MenuFragment(num: String):Fragment(){
     var initSideDish = 0
     lateinit var rg:RadioGroup
     var initTo0 = false
+    var priceMealList = mutableListOf<Int>()
+    var priceSideDishList = mutableListOf<Int>()
+    lateinit var b : Bundle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -81,6 +84,7 @@ class MenuFragment(num: String):Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    b = Bundle()
                     for (i in dataSnapshot.children){
                         //到時候status要從店家那邊設定，這邊暫時先在firebase直接新增status欄位並設定成空桌
                         if (i.key == "status"){
@@ -111,6 +115,7 @@ class MenuFragment(num: String):Fragment(){
                         var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
                         mealList.add(mealFromBase)
                         supplyMealList.add(mealFromBase.supply)
+                        priceMealList.add(mealFromBase.price)
                         if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${mealFromBase.name}" to 0
@@ -149,7 +154,7 @@ class MenuFragment(num: String):Fragment(){
                         }
                         radioButtonList.add(radioButton)
 
-
+                        b.
 
                     }
                     initMealState()
@@ -170,7 +175,7 @@ class MenuFragment(num: String):Fragment(){
                         var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
                         sideDishList.add(sideDishFromBase)
                         supplySideDishList.add(sideDishFromBase.supply)
-
+                        priceSideDishList.add(sideDishFromBase.price)
                         if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${sideDishFromBase.name}" to 0
@@ -253,8 +258,21 @@ class MenuFragment(num: String):Fragment(){
                 }
             }
         })
-
-
+        var b = Bundle()
+        //b.putString("num",this.num)
+        var mealList = ArrayList<Int>()
+        priceMealList.forEach{
+                item -> mealList.add(item)
+        }
+        b.putIntegerArrayList("priceMeal",mealList)
+        var sideDishList = ArrayList<Int>()
+        priceSideDishList.forEach{
+                item -> sideDishList.add(item)
+        }
+        b.putIntegerArrayList("priceSideDish",sideDishList)
+        fragmentManager?.setFragmentResult("toCart", b)
+        val mainActivity = activity as MainActivity
+        Log.e("mealList",mealList.toString())
 
 
 
@@ -397,9 +415,13 @@ class MenuFragment(num: String):Fragment(){
             btn_add2Cart.setOnClickListener{
                 if(meal != "" && sideDish.isNotEmpty()){
                     isadded = true
-                    var b = Bundle()
+                    /*var b = Bundle()
                     //b.putString("num",this.num)
-                    b.putString("meal",this.meal)
+                    var mealList = ArrayList<Int>()
+                    priceMealList.forEach{
+                            item -> mealList.add(item)
+                    }
+                    b.putIntegerArrayList("priceMeal",mealList)*/
                     tempOrderRef.child(num).child("meal").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {}
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -423,11 +445,11 @@ class MenuFragment(num: String):Fragment(){
                     })
 
 
-                    var sideDishList = ArrayList<String>()
-                    this.sideDish.forEach{
+                    /*var sideDishList = ArrayList<Int>()
+                    priceSideDishList.forEach{
                             item -> sideDishList.add(item)
                     }
-                    b.putStringArrayList("sideDish",sideDishList)
+                    b.putIntegerArrayList("priceSideDish",sideDishList)*/
 
                     tempOrderRef.child(num).child("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onCancelled(p0: DatabaseError) {}
@@ -456,8 +478,8 @@ class MenuFragment(num: String):Fragment(){
 
 
                     // Use the Kotlin extension in the fragment-ktx artifact
-                    fragmentManager?.setFragmentResult("toCart", b)
-                    val mainActivity = activity as MainActivity
+                    //fragmentManager?.setFragmentResult("toCart", b)
+                    //val mainActivity = activity as MainActivity
                     mainActivity.switch2Cart(isadded)
 
                 }else if(meal == "" || sideDish.isEmpty()){

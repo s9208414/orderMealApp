@@ -39,6 +39,10 @@ class OrderFragment(num: String) :Fragment(){
     private var order = ArrayList<Order>()
     lateinit var decoration:RecyclerViewItemSpace
     private lateinit var btn_sendOrder:Button
+    private var priceMealList = ArrayList<Int>()
+    private var priceSideDishList = ArrayList<Int>()
+    var sum = 0
+    private lateinit var tv_sum: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         decoration = RecyclerViewItemSpace()
@@ -81,7 +85,7 @@ class OrderFragment(num: String) :Fragment(){
         //創建 MyRecyclerAdapter 並連結 recyclerView
         mealadapter = MealRecyclerAdapter(orderMeal,num)
         sidedishadapter = SideDishRecyclerAdapter(orderSideDish,num)
-
+        tv_sum = requireView().findViewById(R.id.tv_sum)
         if (rv_meal != null) {
             rv_meal.addItemDecoration(decoration)
             rv_meal.layoutManager = LinearLayoutManager(requireActivity())
@@ -105,6 +109,7 @@ class OrderFragment(num: String) :Fragment(){
         if (tv_num != null) {
             tv_num.text = "桌號:"+" "+this.num
         }
+
         tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -127,6 +132,12 @@ class OrderFragment(num: String) :Fragment(){
                                     break
                                 }
                             }
+                        }
+                        if (priceMealList.isNotEmpty()){
+                            for (i in orderMeal){
+                                sum = i.number * priceMealList[orderMeal.indexOf(i)]
+                            }
+                            tv_sum.text = "總金額: $sum"
                         }
 
                         mealadapter.notifyDataSetChanged()
@@ -159,6 +170,12 @@ class OrderFragment(num: String) :Fragment(){
                             }
                         }
                     }
+                    if (priceSideDishList.isNotEmpty()){
+                        for (i in orderSideDish){
+                            sum = i.number * priceSideDishList[orderSideDish.indexOf(i)]
+                        }
+                        tv_sum.text = "總金額: $sum"
+                    }
 
                     sidedishadapter.notifyDataSetChanged()
                 }
@@ -184,10 +201,18 @@ class OrderFragment(num: String) :Fragment(){
 
 
 
-        /*fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
-            meal = bundle.getString("meal").toString()
-            sideDish = bundle.getStringArrayList("sideDish") as ArrayList<String>
-            if(meal in mealMap.keys){
+        fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
+            var tempMeal = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
+            for (i in tempMeal){
+                priceMealList.add(i)
+            }
+            var tempSideDish = bundle.getIntegerArrayList("priceSideDish") as ArrayList<Int>
+            for (i in tempSideDish){
+                priceSideDishList.add(i)
+            }
+            //priceMealList = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
+            //priceSideDishList = bundle.getIntegerArrayList("priceSideDish") as ArrayList<Int>
+            /*if(meal in mealMap.keys){
                 Log.e("meal in mealMap","true")
                 var mealNum = mealMap[meal]?.plus(1)
 
@@ -233,8 +258,8 @@ class OrderFragment(num: String) :Fragment(){
             Log.e("sideDish",sideDish.toString())
             Log.e("orderMealListSize", orderMeal.size.toString())
             Log.e("sideDishListSize", orderSideDish.size.toString())
-            Log.e("已執行到加到購物車","true")
-        }*/
+            Log.e("已執行到加到購物車","true")*/
+        }
 
 
     }
