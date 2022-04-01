@@ -47,6 +47,8 @@ class OrderFragment(num: String) :Fragment(){
     private var sideDishNamePrice = mutableMapOf<String,Int>()
     var sideDishMapSize = 0
     var sum = 0
+    var mealSize = 0
+    var sideDishSize = 0
     private lateinit var tv_sum: TextView
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,152 +116,17 @@ class OrderFragment(num: String) :Fragment(){
         if (tv_num != null) {
             tv_num.text = "桌號:"+" "+this.num
         }
-        database.getReference()
-        database.getReference("meal").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (i in dataSnapshot.children){
-                        var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
-                        mealNamePrice.put(mealFromBase.name,mealFromBase.price)
-                    }
-                }
-            }
-        })
-        database.getReference("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    for (i in dataSnapshot.children){
-                        var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
-                        sideDishNamePrice.put(sideDishFromBase.name,sideDishFromBase.price)
-                    }
-                }
-            }
-        })
-        tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
-                override fun onCancelled(p0: DatabaseError) {}
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    if (dataSnapshot.exists()) {
-                        if (orderMeal.size < dataSnapshot.children.count()){
-                            for (i in dataSnapshot.children){
-                                orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                            }
-                        }else{
-                            for (i in dataSnapshot.children){
-                                for (j in orderMeal){
-                                    if (i.key == j.name){
-                                        j.number = Integer.parseInt(i.value.toString())
-                                        break
-                                    }else{
-                                        continue
-                                        //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                    }
-                                    orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                    break
-                                }
-                            }
-                        }
-
-                        mealadapter.notifyDataSetChanged()
-                    }
-                    /*Log.e("orderMeal",orderMeal.toString())
-                    Log.e("priceMealList",priceMealList.toString())
-                    for (i in orderMeal){
-                        if (i.name in mealNamePrice.keys){
-                            sum = sum + i.number * mealNamePrice[i.name]!!
-                        }
-
-                    }
-                    tv_sum.text = "總金額: $sum"*/
-
-                    Log.e("sum",sum.toString())
-                }
-            }
-        )
-
-
-        tempOrderRef.child(num).child("sideDish").addValueEventListener(object : ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {}
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                if (dataSnapshot.exists()) {
-                    /*if (orderSideDish.size < dataSnapshot.children.count()){
-                        for (i in dataSnapshot.children){
-                            orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                            Log.e("sideDishCount", dataSnapshot.children.count().toString())
-                            Log.e("orderSideDish.size", orderSideDish.size.toString())
-                        }
-                    }else{
-                        for (i in dataSnapshot.children){
-                            for (j in orderSideDish){
-                                if (i.key == j.name){
-                                    j.number = Integer.parseInt(i.value.toString())
-                                    break
-                                }else{
-                                    continue
-                                    //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                }
-                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                break
-                            }
-                        }
-                    }*/
-                    for (i in dataSnapshot.children){
-                        Log.e("sideDish",i.toString())
-                        sideDishMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
-                        sideDishMapSize++
-                        Log.e("sideDishMap",sideDishMap.toString())
-                        for (j in sideDishMap){
-                            if (j.value == 0){
-                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                            }
-                        }
-                    }
-
-                    sidedishadapter.notifyDataSetChanged()
-                }
-                /*Log.e("orderSideDish",orderSideDish.toString())
-                Log.e("priceSideDishList",priceSideDishList.toString())
-                for (i in orderSideDish){
-                    if (i.name in sideDishNamePrice.keys){
-                        sum = sum + i.number * sideDishNamePrice[i.name]!!
-                    }
-
-                }*/
-                tv_sum.text = "總金額: $sum"
-
-                Log.e("sum",sum.toString())
-            }
-        }
-        )
-
-        btn_sendOrder.setOnClickListener {
-
-            val childUpdates = hashMapOf<String, Any>(
-                "order" to "已送出"
-            )
-            database.getReference("temp_order").child(num).updateChildren(childUpdates).addOnSuccessListener {
-                btn_sendOrder.isEnabled = false
-                Toast.makeText(requireActivity(),"訂單送出成功",Toast.LENGTH_SHORT)
-            }.addOnFailureListener {
-                Toast.makeText(requireActivity(),"訂單送出失敗",Toast.LENGTH_SHORT)
-            }
-
-
-        }
-
-
-
-
         fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
-            var tempMeal = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
+            /*var tempMeal = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
             for (i in tempMeal){
                 priceMealList.add(i)
             }
             var tempSideDish = bundle.getIntegerArrayList("priceSideDish") as ArrayList<Int>
             for (i in tempSideDish){
                 priceSideDishList.add(i)
-            }
+            }*/
+            mealSize = bundle.getInt("mealSize")
+            sideDishSize = bundle.getInt("sideDishSize")
             //priceMealList = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
             //priceSideDishList = bundle.getIntegerArrayList("priceSideDish") as ArrayList<Int>
             /*if(meal in mealMap.keys){
@@ -310,6 +177,194 @@ class OrderFragment(num: String) :Fragment(){
             Log.e("sideDishListSize", orderSideDish.size.toString())
             Log.e("已執行到加到購物車","true")*/
         }
+        /*database.getReference()
+        database.getReference("meal").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        var mealFromBase = Gson().fromJson(i.value.toString(),Meal::class.java)
+                        mealNamePrice.put(mealFromBase.name,mealFromBase.price)
+                    }
+                }
+            }
+        })*/
+        /*database.getReference("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        var sideDishFromBase = Gson().fromJson(i.value.toString(),SideDish::class.java)
+                        sideDishNamePrice.put(sideDishFromBase.name,sideDishFromBase.price)
+                    }
+                }
+            }
+        })*/
+        tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
+                override fun onCancelled(p0: DatabaseError) {}
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        /*if (orderMeal.size < dataSnapshot.children.count()){
+                            for (i in dataSnapshot.children){
+                                orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            }
+                        }else{
+                            for (i in dataSnapshot.children){
+                                for (j in orderMeal){
+                                    if (i.key == j.name){
+                                        j.number = Integer.parseInt(i.value.toString())
+                                        break
+                                    }else{
+                                        continue
+                                        //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    }
+                                    orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    break
+                                }
+                            }
+                        }*/
+                        for (i in dataSnapshot.children){
+                            if (orderMeal.size < mealSize){
+                                //orderMeal[dataSnapshot.children.indexOf(i)]
+                                if (mealMap.isEmpty()){
+                                    mealMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
+                                    orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    Log.e("mealMap",mealMap.toString())
+                                    Log.e("orderMeal",orderMeal.toString())
+                                    Log.e("orderMeal.size",orderMeal.size.toString())
+                                    Log.e("mealSize",mealSize.toString())
+                                }else{
+                                    if (mealMap.containsKey(i.key.toString())){
+                                        mealMap[i.key.toString()] = Integer.parseInt(i.value.toString())
+                                        Log.e("mealMap",mealMap.toString())
+                                        Log.e("orderMeal",orderMeal.toString())
+                                        continue
+                                    }else{
+                                        mealMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
+                                        orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                    }
+                                }
+                                //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            }else{
+                                for (j in orderMeal){
+                                    if (j.name == i.key){
+                                        orderMeal[orderMeal.indexOf(j)].number = Integer.parseInt(i.value.toString())
+                                    }
+                                }
+                            }
+                        }
+                        Log.e("orderMeal",orderMeal.toString())
+                        mealadapter.notifyDataSetChanged()
+                    }
+                    /*Log.e("orderMeal",orderMeal.toString())
+                    Log.e("priceMealList",priceMealList.toString())
+                    for (i in orderMeal){
+                        if (i.name in mealNamePrice.keys){
+                            sum = sum + i.number * mealNamePrice[i.name]!!
+                        }
+
+                    }
+                    tv_sum.text = "總金額: $sum"*/
+
+                    Log.e("sum",sum.toString())
+                }
+            }
+        )
+
+
+        tempOrderRef.child(num).child("sideDish").addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    /*if (orderSideDish.size < dataSnapshot.children.count()){
+                        for (i in dataSnapshot.children){
+                            orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                            Log.e("sideDishCount", dataSnapshot.children.count().toString())
+                            Log.e("orderSideDish.size", orderSideDish.size.toString())
+                        }
+                    }else{
+                        for (i in dataSnapshot.children){
+                            for (j in orderSideDish){
+                                if (i.key == j.name){
+                                    j.number = Integer.parseInt(i.value.toString())
+                                    break
+                                }else{
+                                    continue
+                                    //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                }
+                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                break
+                            }
+                        }
+                    }*/
+                    for (i in dataSnapshot.children){
+                        if (orderSideDish.size < sideDishSize){
+                            //orderMeal[dataSnapshot.children.indexOf(i)]
+                            if (sideDishMap.isEmpty()){
+                                sideDishMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
+                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                /*Log.e("mealMap",mealMap.toString())
+                                Log.e("orderMeal",orderMeal.toString())
+                                Log.e("orderMeal.size",orderMeal.size.toString())
+                                Log.e("mealSize",mealSize.toString())*/
+                            }else{
+                                if (sideDishMap.containsKey(i.key.toString())){
+                                    sideDishMap[i.key.toString()] = Integer.parseInt(i.value.toString())
+                                    /*Log.e("mealMap",mealMap.toString())
+                                    Log.e("orderMeal",orderMeal.toString())*/
+                                    continue
+                                }else{
+                                    sideDishMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
+                                    orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                                }
+                            }
+                            //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
+                        }else{
+                            for (j in orderSideDish){
+                                if (j.name == i.key){
+                                    orderSideDish[orderSideDish.indexOf(j)].number = Integer.parseInt(i.value.toString())
+                                }
+                            }
+                        }
+                    }
+                    Log.e("orderSideDish",orderSideDish.toString())
+
+                    sidedishadapter.notifyDataSetChanged()
+                }
+                /*Log.e("orderSideDish",orderSideDish.toString())
+                Log.e("priceSideDishList",priceSideDishList.toString())
+                for (i in orderSideDish){
+                    if (i.name in sideDishNamePrice.keys){
+                        sum = sum + i.number * sideDishNamePrice[i.name]!!
+                    }
+
+                }*/
+                tv_sum.text = "總金額: $sum"
+
+                Log.e("sum",sum.toString())
+            }
+        }
+        )
+
+        btn_sendOrder.setOnClickListener {
+
+            val childUpdates = hashMapOf<String, Any>(
+                "order" to "已送出"
+            )
+            database.getReference("temp_order").child(num).updateChildren(childUpdates).addOnSuccessListener {
+                btn_sendOrder.isEnabled = false
+                Toast.makeText(requireActivity(),"訂單送出成功",Toast.LENGTH_SHORT)
+            }.addOnFailureListener {
+                Toast.makeText(requireActivity(),"訂單送出失敗",Toast.LENGTH_SHORT)
+            }
+
+
+        }
+
+
+
+
+
 
 
     }

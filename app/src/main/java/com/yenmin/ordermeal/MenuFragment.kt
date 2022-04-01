@@ -120,6 +120,7 @@ class MenuFragment(num: String):Fragment(){
                         priceMealList.add(mealFromBase.price)
                         var list = listOf<String>(mealFromBase.name,mealFromBase.price.toString())
                         mealNamePrice.add(list)
+                        Log.e("initTo0",initTo0.toString())
                         if (initTo0 == true){
                             val childUpdates = hashMapOf<String, Any>(
                                 "${mealFromBase.name}" to 0
@@ -160,6 +161,7 @@ class MenuFragment(num: String):Fragment(){
 
 
                     }
+                    b.putInt("mealSize",mealList.size)
                     /*var tempList = ArrayList<List<String>>()
                     mealNamePrice.forEach(){
                         i -> tempList.add(i)
@@ -259,14 +261,15 @@ class MenuFragment(num: String):Fragment(){
                         checkBoxList.add(checkBox)
                         recordLastCheckBoxId = checkBox.id
                     }
+                    b.putInt("sideDishSize",sideDishList.size)
                     /*var tempList = ArrayList<Int>()
                     priceSideDishList.forEach(){
                             i -> tempList.add(i)
                     }
-                    b.putIntegerArrayList("priceSideDish",tempList)
+                    b.putIntegerArrayList("priceSideDish",tempList)*/
                     fragmentManager?.setFragmentResult("toCart", b)
                     val mainActivity = activity as MainActivity
-                    Log.e("mealList",mealList.toString())*/
+                    //Log.e("mealList",mealList.toString())
                     initSideDishState()
                     val btn_add2Cart_params = btn_add2Cart.layoutParams as ConstraintLayout.LayoutParams
                     btn_add2Cart_params.topToBottom = recordLastCheckBoxId
