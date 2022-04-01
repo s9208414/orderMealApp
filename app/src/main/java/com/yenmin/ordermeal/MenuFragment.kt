@@ -162,10 +162,11 @@ class MenuFragment(num: String):Fragment(){
 
                     }
                     b.putInt("mealSize",mealList.size)
-                    /*var tempList = ArrayList<List<String>>()
-                    mealNamePrice.forEach(){
-                        i -> tempList.add(i)
-                    }*/
+                    var tempList = ArrayList<Int>()
+                    priceMealList.forEach(){
+                            i -> tempList.add(i)
+                    }
+                    b.putIntegerArrayList("priceMeal",tempList)
                     //b.putParcelableArrayList("mealName&Price",tempList)
                     //b.putParcelableArrayList("mealName&Price",tempList)
                     initMealState()
@@ -262,11 +263,11 @@ class MenuFragment(num: String):Fragment(){
                         recordLastCheckBoxId = checkBox.id
                     }
                     b.putInt("sideDishSize",sideDishList.size)
-                    /*var tempList = ArrayList<Int>()
+                    var tempList = ArrayList<Int>()
                     priceSideDishList.forEach(){
                             i -> tempList.add(i)
                     }
-                    b.putIntegerArrayList("priceSideDish",tempList)*/
+                    b.putIntegerArrayList("priceSideDish",tempList)
                     fragmentManager?.setFragmentResult("toCart", b)
                     val mainActivity = activity as MainActivity
                     //Log.e("mealList",mealList.toString())

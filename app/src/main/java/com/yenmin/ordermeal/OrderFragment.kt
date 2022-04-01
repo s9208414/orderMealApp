@@ -177,7 +177,7 @@ class OrderFragment(num: String) :Fragment(){
             Log.e("sideDishListSize", orderSideDish.size.toString())
             Log.e("已執行到加到購物車","true")*/
         }
-        /*database.getReference()
+        //database.getReference()
         database.getReference("meal").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -188,8 +188,8 @@ class OrderFragment(num: String) :Fragment(){
                     }
                 }
             }
-        })*/
-        /*database.getReference("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
+        })
+        database.getReference("sideDish").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -199,31 +199,13 @@ class OrderFragment(num: String) :Fragment(){
                     }
                 }
             }
-        })*/
+        })
         tempOrderRef.child(num).child("meal").addValueEventListener(object : ValueEventListener {
                 override fun onCancelled(p0: DatabaseError) {}
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
                     if (dataSnapshot.exists()) {
-                        /*if (orderMeal.size < dataSnapshot.children.count()){
-                            for (i in dataSnapshot.children){
-                                orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                            }
-                        }else{
-                            for (i in dataSnapshot.children){
-                                for (j in orderMeal){
-                                    if (i.key == j.name){
-                                        j.number = Integer.parseInt(i.value.toString())
-                                        break
-                                    }else{
-                                        continue
-                                        //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                    }
-                                    orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                    break
-                                }
-                            }
-                        }*/
                         for (i in dataSnapshot.children){
+                            Log.e("mealChildren",i.toString())
                             if (orderMeal.size < mealSize){
                                 //orderMeal[dataSnapshot.children.indexOf(i)]
                                 if (mealMap.isEmpty()){
@@ -253,8 +235,16 @@ class OrderFragment(num: String) :Fragment(){
                                 }
                             }
                         }
-                        Log.e("orderMeal",orderMeal.toString())
                         mealadapter.notifyDataSetChanged()
+
+                        /*for (i in orderMeal){
+                            for (j in mealNamePrice){
+                                if (j.key == i.name){
+                                    sum += i.number * j.value
+                                }
+                            }
+                        }
+                        Log.e("orderMeal",orderMeal.toString())*/
                     }
                     /*Log.e("orderMeal",orderMeal.toString())
                     Log.e("priceMealList",priceMealList.toString())
@@ -276,27 +266,6 @@ class OrderFragment(num: String) :Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
-                    /*if (orderSideDish.size < dataSnapshot.children.count()){
-                        for (i in dataSnapshot.children){
-                            orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                            Log.e("sideDishCount", dataSnapshot.children.count().toString())
-                            Log.e("orderSideDish.size", orderSideDish.size.toString())
-                        }
-                    }else{
-                        for (i in dataSnapshot.children){
-                            for (j in orderSideDish){
-                                if (i.key == j.name){
-                                    j.number = Integer.parseInt(i.value.toString())
-                                    break
-                                }else{
-                                    continue
-                                    //orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                }
-                                orderSideDish.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
-                                break
-                            }
-                        }
-                    }*/
                     for (i in dataSnapshot.children){
                         if (orderSideDish.size < sideDishSize){
                             //orderMeal[dataSnapshot.children.indexOf(i)]
@@ -327,9 +296,24 @@ class OrderFragment(num: String) :Fragment(){
                             }
                         }
                     }
-                    Log.e("orderSideDish",orderSideDish.toString())
+
 
                     sidedishadapter.notifyDataSetChanged()
+                    sum = 0
+                    for (i in orderMeal){
+                        if (i.name in mealNamePrice.keys){
+                            sum = sum + i.number * mealNamePrice[i.name]!!
+                        }
+
+                    }
+                    for (i in orderSideDish){
+                        for (j in sideDishNamePrice){
+                            if (j.key == i.name){
+                                sum += i.number * j.value
+                            }
+                        }
+                    }
+                    Log.e("orderSideDish",orderSideDish.toString())
                 }
                 /*Log.e("orderSideDish",orderSideDish.toString())
                 Log.e("priceSideDishList",priceSideDishList.toString())
