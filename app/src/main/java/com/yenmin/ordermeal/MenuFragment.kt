@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.children
+import androidx.core.view.isVisible
 import androidx.core.view.setMargins
 import androidx.fragment.app.Fragment
 import com.google.firebase.FirebaseApp
@@ -52,6 +54,8 @@ class MenuFragment(num: String):Fragment(){
     var b = Bundle()
     var mealNamePrice = mutableListOf<List<String>>()
     var sideDishNamePrice = mutableListOf<List<String>>()
+    lateinit var fragment_menu: ConstraintLayout
+    lateinit var radioGroup: RadioGroup
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -68,6 +72,8 @@ class MenuFragment(num: String):Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         //Log.e("MenuFragment","onViewCreated")
+        fragment_menu = requireView().findViewById(R.id.fragment_menu)
+        radioGroup = requireView().findViewById(R.id.radioGroup)
         tv_sideDish = requireView().findViewById(R.id.tv_sideDish)
         btn_add2Cart = requireView().findViewById(R.id.btn_add2Cart)
         rg = requireView().findViewById(R.id.radioGroup)
@@ -83,11 +89,17 @@ class MenuFragment(num: String):Fragment(){
         )
         tempOrderRef.child(num).updateChildren(childUpdates)
 
+
         tempOrderRef.child(num).addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
+                        if (i.key == "order"){
+                            if (i.value.toString() == "已送出"){
+                                btn_add2Cart.isEnabled =false
+                            }
+                        }
                         //到時候status要從店家那邊設定，這邊暫時先在firebase直接新增status欄位並設定成空桌
                         if (i.key == "status"){
                             if (i.value.toString() == "空桌"){
@@ -178,7 +190,7 @@ class MenuFragment(num: String):Fragment(){
         sideDishRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             var recordLastCheckBoxId = 0
-            val fragment_order = getView()?.findViewById<ConstraintLayout>(R.id.fragment_order)
+
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (i in dataSnapshot.children){
@@ -255,8 +267,8 @@ class MenuFragment(num: String):Fragment(){
                         }
 
                         checkBox.requestLayout()
-                        if (fragment_order != null) {
-                            fragment_order.addView(checkBox)
+                        if (fragment_menu != null) {
+                            fragment_menu.addView(checkBox)
                         }
                         //Log.e("id",checkBox.id.toString())
                         checkBoxList.add(checkBox)

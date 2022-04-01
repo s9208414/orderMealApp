@@ -15,6 +15,7 @@ class MealRecyclerAdapter(
 ):RecyclerView.Adapter<MealRecyclerAdapter.ViewHolder>(){
     private lateinit var database: FirebaseDatabase
     var orderFragment = orderFragment
+    var enable = true
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_name = v.findViewById<TextView>(R.id.name)
         val tv_number = v.findViewById<TextView>(R.id.number)
@@ -42,15 +43,18 @@ class MealRecyclerAdapter(
         holder.img_delete.setOnClickListener {
             //data.removeAt(position)
             //notifyDataSetChanged()
-            if (data[position].number >= 1){
-                --data[position].number
+            if (enable == true){
+                if (data[position].number >= 1){
+                    --data[position].number
+                }
+                val childUpdates = hashMapOf<String, Any>(
+                    "${data[position].name}" to data[position].number
+                )
+                database.getReference("temp_order").child(num).child("meal").updateChildren(childUpdates)
+                notifyDataSetChanged()
+                orderFragment.calSum()
             }
-            val childUpdates = hashMapOf<String, Any>(
-                "${data[position].name}" to data[position].number
-            )
-            database.getReference("temp_order").child(num).child("meal").updateChildren(childUpdates)
-            notifyDataSetChanged()
-            orderFragment.calSum()
+
         }
 
 

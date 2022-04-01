@@ -176,6 +176,23 @@ class OrderFragment(num: String) :Fragment(){
             Log.e("已執行到加到購物車","true")*/
         }
         //database.getReference()
+        tempOrderRef.child(num).addValueEventListener(object : ValueEventListener {
+            override fun onCancelled(p0: DatabaseError) {}
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (i in dataSnapshot.children){
+                        if (i.key == "order"){
+                            if (i.value.toString() == "已送出"){
+                                btn_sendOrder.isEnabled = false
+                                mealadapter.enable = false
+                                sidedishadapter.enable = false
+                            }
+                        }
+                        //Log.e("i.value",i.value.toString())
+                    }
+                }
+            }
+        })
         database.getReference("meal").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
