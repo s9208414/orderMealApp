@@ -7,8 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -90,8 +88,8 @@ class OrderFragment(num: String) :Fragment(){
             rv_sideDish.addItemDecoration(RecyclerViewItemSpace(space))
         }*/
         //創建 MyRecyclerAdapter 並連結 recyclerView
-        mealadapter = MealRecyclerAdapter(orderMeal,num)
-        sidedishadapter = SideDishRecyclerAdapter(orderSideDish,num)
+        mealadapter = MealRecyclerAdapter(orderMeal,num,this)
+        sidedishadapter = SideDishRecyclerAdapter(orderSideDish,num,this)
         tv_sum = requireView().findViewById(R.id.tv_sum)
         if (rv_meal != null) {
             rv_meal.addItemDecoration(decoration)
@@ -301,10 +299,11 @@ class OrderFragment(num: String) :Fragment(){
                     sidedishadapter.notifyDataSetChanged()
                     sum = 0
                     for (i in orderMeal){
-                        if (i.name in mealNamePrice.keys){
-                            sum = sum + i.number * mealNamePrice[i.name]!!
+                        for (j in mealNamePrice){
+                            if (j.key == i.name){
+                                sum += i.number * j.value
+                            }
                         }
-
                     }
                     for (i in orderSideDish){
                         for (j in sideDishNamePrice){
@@ -323,7 +322,8 @@ class OrderFragment(num: String) :Fragment(){
                     }
 
                 }*/
-                tv_sum.text = "總金額: $sum"
+                calSum()
+                //tv_sum.text = "總金額: $sum"
 
                 Log.e("sum",sum.toString())
             }
@@ -392,6 +392,24 @@ class OrderFragment(num: String) :Fragment(){
             Toast.makeText(requireActivity(),"您尚未點餐",Toast.LENGTH_SHORT).show()
         }
     }*/
+    fun calSum(){
+        sum = 0
+        for (i in orderMeal){
+            for (j in mealNamePrice){
+                if (j.key == i.name){
+                    sum += i.number * j.value
+                }
+            }
+        }
+        for (i in orderSideDish){
+            for (j in sideDishNamePrice){
+                if (j.key == i.name){
+                    sum += i.number * j.value
+                }
+            }
+        }
+        tv_sum.text = "總金額: $sum"
+    }
 
 }
 data class Order(
