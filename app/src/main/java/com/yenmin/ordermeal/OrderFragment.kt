@@ -351,7 +351,8 @@ class OrderFragment(num: String) :Fragment(){
 
             val childUpdates = hashMapOf<String, Any>(
                 "order" to "已送出",
-                "sum" to sum
+                "sum" to sum,
+                "cooked" to false
             )
             database.getReference("temp_order").child(num).updateChildren(childUpdates).addOnSuccessListener {
                 btn_sendOrder.isEnabled = false
