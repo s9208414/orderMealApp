@@ -1,6 +1,7 @@
 package com.yenmin.ordermeal
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
+import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 
 class RecieveFragment(num_manger: String, position: String): Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var tempOrderRef: DatabaseReference
     private lateinit var orderadapter: OrderRecyclerAdapter
+    private var temp_order_list = ArrayList<TempOrder>()
     var num = num_manger
     var position = position
     lateinit var decoration:RecyclerViewItemSpace
@@ -44,20 +48,102 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
         database = FirebaseDatabase.getInstance()
         tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
-        orderadapter = OrderRecyclerAdapter()
 
+        orderadapter = OrderRecyclerAdapter(temp_order_list)
         if (rv_order != null) {
             rv_order.addItemDecoration(decoration)
             rv_order.layoutManager = LinearLayoutManager(requireActivity())
             rv_order.adapter = orderadapter
         }
-        tempOrderRef
+        tempOrderRef.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()){
+                    for (i in snapshot.children){
+                        Log.e("i.value",i.value.toString())
+                        var temp = Gson().fromJson(i.value.toString(),Temp::class.java)
+                        //var mealList = temp.meal
+                        if (temp.cooked == false){
+                            var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
+                            temp_order_list.add(order)
+                        }
+                        orderadapter.notifyDataSetChanged()
+                        Log.e("temp_order_list",temp_order_list.toString())
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
+
 
     }
 }
+data class Temp(
+    @SerializedName("cooked")
+    var cooked: Boolean,
+    @SerializedName("id")
+    var id: String,
+    @SerializedName("meal")
+    var meal: MealNum,
+    @SerializedName("order")
+    var order: String,
+    @SerializedName("sideDish")
+    var sideDish: SideDishNum,
+    @SerializedName("status")
+    var status: String,
+    @SerializedName("sum")
+    var sum: Int
+)
+data class MealNum(
+    @SerializedName("牛排")
+    var beef: Int,
+    @SerializedName("豬排")
+    var pork: Int,
+    @SerializedName("魚排")
+    var fish: Int
+){
+    fun getList():List<String>{
+        var list = mutableListOf<String>()
+        list.add(0,"牛排")
+        list.add(1,beef.toString())
+        list.add(2,"豬排")
+        list.add(3,pork.toString())
+        list.add(4,"魚排")
+        list.add(5,fish.toString())
+        var tempList = list.toList()
+        return  tempList
+    }
+}
+data class SideDishNum(
+    @SerializedName("沙拉")
+    var salad: Int,
+    @SerializedName("馬鈴薯")
+    var potato: Int,
+    @SerializedName("義大利麵")
+    var spaghetti: Int,
+    @SerializedName("玉米濃湯")
+    var coreSoup: Int,
+){
+    fun getList():List<String>{
+        var list = mutableListOf<String>()
+        list.add(0,"沙拉")
+        list.add(1,salad.toString())
+        list.add(2,"馬鈴薯")
+        list.add(3,potato.toString())
+        list.add(4,"義大利麵")
+        list.add(5,spaghetti.toString())
+        list.add(6,"玉米濃湯")
+        list.add(7,coreSoup.toString())
+        var tempList = list.toList()
+        return  tempList
+    }
+}
 data class TempOrder(
-    val number: String,
-    val meal: List<String>,
-    val sideDish: List<String>,
-    val cooked: Boolean
+    var number: String,
+    var meal: List<String>,
+    var sideDish: List<String>,
+    var cooked: Boolean
 )

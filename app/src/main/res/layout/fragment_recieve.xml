@@ -42,7 +42,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/tv_col"
-        android:text="桌號                      主餐                          副餐"
+        android:text="桌號               主餐                  副餐"
         android:textSize="15sp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"

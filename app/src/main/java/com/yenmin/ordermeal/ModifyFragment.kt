@@ -191,14 +191,14 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                             override fun afterTextChanged(s: Editable?) {
                                 if (editPrice.text.isNotEmpty()){
                                     mealList[i.key?.toInt()!!-1].price = Integer.parseInt(editPrice.text.toString())
-                                    Log.e("afterTextChanged_mealList",mealList.toString())
+                                    //Log.e("afterTextChanged_mealList",mealList.toString())
                                 }
 
                             }
 
                             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                                 mealList[i.key?.toInt()!!-1].price = meal.price
-                                Log.e("beforeTextChanged_mealList",mealList.toString())
+                                //Log.e("beforeTextChanged_mealList",mealList.toString())
                             }
 
                             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
@@ -333,14 +333,14 @@ class ModifyFragment(num_manger: String, position: String): Fragment() {
                             override fun afterTextChanged(s: Editable?) {
                                 if (editPrice.text.isNotEmpty()){
                                     sideDishList[i.key?.toInt()!!-1].price = editPrice.text.toString().toInt()
-                                    Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
+                                    //Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
                                 }
 
                             }
 
                             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                                 sideDishList[i.key?.toInt()!!-1].price = sideDish.price
-                                Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
+                                //Log.e("beforeTextChanged_sideDishList",sideDishList.toString())
                             }
 
                             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {

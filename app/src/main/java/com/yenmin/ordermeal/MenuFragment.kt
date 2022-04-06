@@ -98,6 +98,10 @@ class MenuFragment(num: String):Fragment(){
                         if (i.key == "order"){
                             if (i.value.toString() == "已送出"){
                                 btn_add2Cart.isEnabled =false
+                                val childUpdates = hashMapOf<String, Any>(
+                                    "cooked" to false
+                                )
+                                tempOrderRef.child(num).updateChildren(childUpdates)
                             }
                         }
                         //到時候status要從店家那邊設定，這邊暫時先在firebase直接新增status欄位並設定成空桌
