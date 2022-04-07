@@ -125,7 +125,7 @@ class LoginActivity : AppCompatActivity() {
                     }
                     Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
                 }
-                
+
                 //Log.e("customerList",customerList.toString())
                 Log.e("customerLogin",customerLogin.toString())
                 Log.e("number", number.toString())
