@@ -20,6 +20,7 @@ import com.google.gson.annotations.SerializedName
 class CustomerFragment(num_manger: String, position: String): Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var customerRef: DatabaseReference
+    private lateinit var tempOrderRef: DatabaseReference
     private lateinit var customeradapter: CustomerRecyclerAdapter
     private var customer_list = ArrayList<Customer>()
     private var customer_map = mutableMapOf<Int,String>()
@@ -74,14 +75,21 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
             val childUpdates = hashMapOf<String, Any>(
                 "name" to et_name.text.toString(),
                 "number" to Integer.parseInt(et_num.text.toString()),
-                "phone" to et_phone.text.toString()
+                "phone" to et_phone.text.toString(),
             )
             var lastIdx = customer_list.lastIndexOf(customer_list.last())+2
             customerRef.child(lastIdx.toString()).updateChildren(childUpdates)
+
+            val OrderchildUpdates = hashMapOf<String, Any>(
+                "status" to "空桌"
+            )
+
+            tempOrderRef.child(et_num.text.toString()).updateChildren(childUpdates)
         }
 
         database = FirebaseDatabase.getInstance()
         customerRef = database.getReference("customer")
+        tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
 
         customeradapter = CustomerRecyclerAdapter(customer_list)
