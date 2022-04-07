@@ -9,11 +9,14 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.FirebaseDatabase
+import java.lang.Exception
 
 class CustomerRecyclerAdapter(
-    private val data: ArrayList<Customer>
+    private val data: ArrayList<Customer>,
+    private val customer_map: MutableMap<Int,String>
 ):RecyclerView.Adapter<CustomerRecyclerAdapter.ViewHolder>(){
     private lateinit var database: FirebaseDatabase
+    private var customerMap = customer_map
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_number = v.findViewById<TextView>(R.id.number)
         val tv_name = v.findViewById<TextView>(R.id.name)
@@ -41,9 +44,20 @@ class CustomerRecyclerAdapter(
         holder.btn_del_customer.setBackgroundColor(Color.parseColor("#ff0000"))
         //設定監聽器，使用 removeAt()刪除指定位置的資料
         holder.btn_del_customer.setOnClickListener {
-            database.getReference("customer").child(data[position].key).removeValue()
-            data.removeAt(position)
-            notifyDataSetChanged()
+            try {
+                database.getReference("customer").child(data[position].key).removeValue()
+                database.getReference("temp_order").child(data[position].number.toString()).removeValue()
+                customerMap.remove(data[position].number)
+            }catch (e: Exception){
+                database.getReference("customer").child(data[position].key).removeValue()
+                database.getReference("temp_order").child(data[position].number.toString()).removeValue()
+                customerMap.remove(data[position].number)
+            }finally {
+                data.removeAt(position)
+                notifyDataSetChanged()
+            }
+
+
         }
 
 

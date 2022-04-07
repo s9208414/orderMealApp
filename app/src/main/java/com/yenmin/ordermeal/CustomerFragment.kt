@@ -57,19 +57,19 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
         }
         btn_add_customer?.setOnClickListener {
             if (et_num!!.length() < 1){
-                Toast.makeText(requireActivity(),"請輸入桌號",Toast.LENGTH_SHORT)
+                Toast.makeText(requireActivity(),"請輸入桌號",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (Integer.parseInt(et_num.text.toString()) in customer_map.keys){
-                Toast.makeText(requireActivity(),"此位置已有人",Toast.LENGTH_SHORT)
+                Toast.makeText(requireActivity(),"此位置已有人",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (et_name!!.length() < 1){
-                Toast.makeText(requireActivity(),"請輸入姓名",Toast.LENGTH_SHORT)
+                Toast.makeText(requireActivity(),"請輸入姓名",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             if (et_phone!!.length() < 1){
-                Toast.makeText(requireActivity(),"請輸入電話",Toast.LENGTH_SHORT)
+                Toast.makeText(requireActivity(),"請輸入電話",Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             val childUpdates = hashMapOf<String, Any>(
@@ -77,14 +77,20 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
                 "number" to Integer.parseInt(et_num.text.toString()),
                 "phone" to et_phone.text.toString(),
             )
-            var lastIdx = customer_list.lastIndexOf(customer_list.last())+2
+            var lastIdx = 0
+            if (customer_list.isEmpty()){
+                lastIdx = 0
+            }else{
+                lastIdx = customer_list.lastIndexOf(customer_list.last())+1
+            }
+
             customerRef.child(lastIdx.toString()).updateChildren(childUpdates)
 
             val OrderchildUpdates = hashMapOf<String, Any>(
                 "status" to "空桌"
             )
 
-            tempOrderRef.child(et_num.text.toString()).updateChildren(childUpdates)
+            tempOrderRef.child(et_num.text.toString()).updateChildren(OrderchildUpdates)
         }
 
         database = FirebaseDatabase.getInstance()
@@ -92,7 +98,7 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
         tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
 
-        customeradapter = CustomerRecyclerAdapter(customer_list)
+        customeradapter = CustomerRecyclerAdapter(customer_list,customer_map)
         if (rv_customer != null) {
             rv_customer.addItemDecoration(decoration)
             rv_customer.layoutManager = LinearLayoutManager(requireActivity())
@@ -103,14 +109,15 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
                     for (i in snapshot.children){
-                        Log.e("i.value",i.value.toString())
+                        Log.e("i.key",i.key.toString())
                         var temp = Gson().fromJson(i.value.toString(),Customer::class.java)
+                        temp.key = i.key.toString()
                         if (customer_map.containsKey(temp.number)){
                             try {
-                                customer_list[Integer.parseInt(i.key.toString())-1].key = temp.key
-                                customer_list[Integer.parseInt(i.key.toString())-1].number = temp.number
-                                customer_list[Integer.parseInt(i.key.toString())-1].name = temp.name
-                                customer_list[Integer.parseInt(i.key.toString())-1].phone = temp.phone
+                                customer_list[Integer.parseInt(i.key.toString())].key = i.key.toString()
+                                customer_list[Integer.parseInt(i.key.toString())].number = temp.number
+                                customer_list[Integer.parseInt(i.key.toString())].name = temp.name
+                                customer_list[Integer.parseInt(i.key.toString())].phone = temp.phone
                             }catch (e: Exception){
 
                             }
@@ -132,6 +139,8 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
                         if (et_phone != null) {
                             et_phone.text.clear()
                         }
+                        Log.e("customerMap",customer_map.toString())
+                        Log.e("customerList",customer_list.toString())
                         customeradapter.notifyDataSetChanged()
 
                     }

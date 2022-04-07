@@ -65,15 +65,23 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                         if (temp_order_map.containsKey(i.key)){
                             if (temp.cooked == false){
                                 //var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
-                                temp_order_list[i.key?.toInt()!!].meal = temp.meal.getList()
-                                temp_order_list[i.key?.toInt()!!].sideDish = temp.sideDish.getList()
-                                temp_order_list[i.key?.toInt()!!].cooked = temp.cooked
+                                try {
+                                    temp_order_list[i.key?.toInt()!!].meal = temp.meal.getList()
+                                    temp_order_list[i.key?.toInt()!!].sideDish = temp.sideDish.getList()
+                                    temp_order_list[i.key?.toInt()!!].cooked = temp.cooked
+                                }catch (e: Exception){
+
+                                }
                             }
                         }else{
                             if (temp.cooked == false){
-                                temp_order_map[i.key.toString()] = "true"
-                                var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
-                                temp_order_list.add(order)
+                                try {
+                                    temp_order_map[i.key.toString()] = "true"
+                                    var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
+                                    temp_order_list.add(order)
+                                }catch (e: Exception){
+
+                                }
                             }
                         }
                         orderadapter.notifyDataSetChanged()
