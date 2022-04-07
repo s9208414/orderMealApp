@@ -9,7 +9,7 @@ import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 
 class ManagerActivity : AppCompatActivity()  {
-    private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯")
+    private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯","訂位功能")
     lateinit var num : String
     lateinit var position : String
     var switch : Boolean = false
@@ -17,6 +17,7 @@ class ManagerActivity : AppCompatActivity()  {
     lateinit var pager_manager: ViewPager
     lateinit var fg1:RecieveFragment
     lateinit var fg2:ModifyFragment
+    lateinit var fg3:CustomerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,11 +40,12 @@ class ManagerActivity : AppCompatActivity()  {
             num = it.getString("id").toString()
             position = it.getString("position").toString()
             Log.e("MA",num.toString())
+            fg3 = CustomerFragment(num,position)
             fg2 = ModifyFragment(num,position)
             fg1 = RecieveFragment(num,position)
             /*pager.adapter = ViewPagerAdapter(supportFragmentManager,lifecycle,num)
             supportFragmentManager.beginTransaction().commit()*/
-            managerViewPagerAdapter = ManagerViewPagerAdapter(supportFragmentManager,num,fg1,fg2)
+            managerViewPagerAdapter = ManagerViewPagerAdapter(supportFragmentManager,num,fg1,fg2,fg3)
             pager_manager.adapter = managerViewPagerAdapter
             //Log.e("myViewPagerAdapter",myViewPagerAdapter.toString())
 
@@ -63,16 +65,18 @@ class ManagerActivity : AppCompatActivity()  {
 
 
 }
-class ManagerViewPagerAdapter(fm: FragmentManager, num : String, fg1: RecieveFragment, fg2: ModifyFragment) : FragmentStatePagerAdapter(fm){
+class ManagerViewPagerAdapter(fm: FragmentManager, num : String, fg1: RecieveFragment, fg2: ModifyFragment, fg3: CustomerFragment) : FragmentStatePagerAdapter(fm){
     var num = num
     val fg1 = fg1
     val fg2 = fg2
-    private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯")
-    override fun getCount() = 2
+    val fg3 = fg3
+    private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯","訂位功能")
+    override fun getCount() = 3
 
     override fun getItem(position: Int) = when(position){
         0 -> fg1
         1 -> fg2
+        2 -> fg3
         else -> fg1
 
     }

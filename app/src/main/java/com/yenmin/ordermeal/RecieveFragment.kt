@@ -19,6 +19,7 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
     private lateinit var tempOrderRef: DatabaseReference
     private lateinit var orderadapter: OrderRecyclerAdapter
     private var temp_order_list = ArrayList<TempOrder>()
+    private var temp_order_map = mutableMapOf<String,String>()
     var num = num_manger
     var position = position
     lateinit var decoration:RecyclerViewItemSpace
@@ -61,10 +62,19 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                     for (i in snapshot.children){
                         Log.e("i.value",i.value.toString())
                         var temp = Gson().fromJson(i.value.toString(),Temp::class.java)
-                        //var mealList = temp.meal
-                        if (temp.cooked == false){
-                            var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
-                            temp_order_list.add(order)
+                        if (temp_order_map.containsKey(i.key)){
+                            if (temp.cooked == false){
+                                //var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
+                                temp_order_list[i.key?.toInt()!!].meal = temp.meal.getList()
+                                temp_order_list[i.key?.toInt()!!].sideDish = temp.sideDish.getList()
+                                temp_order_list[i.key?.toInt()!!].cooked = temp.cooked
+                            }
+                        }else{
+                            if (temp.cooked == false){
+                                temp_order_map[i.key.toString()] = "true"
+                                var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
+                                temp_order_list.add(order)
+                            }
                         }
                         orderadapter.notifyDataSetChanged()
                         Log.e("temp_order_list",temp_order_list.toString())

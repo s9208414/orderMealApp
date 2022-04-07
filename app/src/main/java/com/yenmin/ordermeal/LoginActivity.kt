@@ -43,6 +43,8 @@ class LoginActivity : AppCompatActivity() {
     //客人欄位
     var name = ""
     var number = 0
+    var phone = ""
+    var key = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +113,7 @@ class LoginActivity : AppCompatActivity() {
                         customerLogin = true
                         name = i.name
                         number = i.number
+                        phone = i.phone
                         break
 
                     }else{
@@ -137,6 +140,7 @@ class LoginActivity : AppCompatActivity() {
                 if (dataSnapshot.exists()) {
                     for(i in dataSnapshot.children){
                         val customer = Gson().fromJson(i.value.toString(), Customer::class.java)
+                        customer.key = i.key.toString()
                         customerList.add(customer)
                         //Log.e("Value is",i.value.toString())
                         //managerList.add(Manager(i.value.))
@@ -244,4 +248,7 @@ data class Customer(
     var number: Int,
     @SerializedName("name")
     var name: String,
+    @SerializedName("phone")
+    var phone: String,
+    var key: String
 )
