@@ -22,6 +22,7 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
     private lateinit var customerRef: DatabaseReference
     private lateinit var tempOrderRef: DatabaseReference
     private lateinit var customeradapter: CustomerRecyclerAdapter
+    private var orderList = ArrayList<TempOrder>()
     private var customer_list = ArrayList<Customer>()
     private var customer_map = mutableMapOf<Int,String>()
     var num = num_manger
@@ -54,6 +55,15 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
         }
         if (tv_position != null) {
             tv_position.text = "職位:"+" "+this.position
+        }
+        fragmentManager?.setFragmentResultListener("toCustomer",viewLifecycleOwner){ key,bundle ->
+            try {
+                orderList = bundle.getParcelableArrayList<TempOrder>("temp_order_list") as ArrayList<TempOrder>
+                Log.e("orderList",orderList.toString())
+            }catch (e: Exception){
+
+            }
+            Log.e("orderList",orderList.toString())
         }
         btn_add_customer?.setOnClickListener {
             if (et_num!!.length() < 1){
@@ -100,7 +110,7 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
         tempOrderRef = database.getReference("temp_order")
         FirebaseApp.initializeApp(requireActivity())
 
-        customeradapter = CustomerRecyclerAdapter(customer_list,customer_map)
+        customeradapter = CustomerRecyclerAdapter(customer_list,customer_map,orderList)
         if (rv_customer != null) {
             rv_customer.addItemDecoration(decoration)
             rv_customer.layoutManager = LinearLayoutManager(requireActivity())

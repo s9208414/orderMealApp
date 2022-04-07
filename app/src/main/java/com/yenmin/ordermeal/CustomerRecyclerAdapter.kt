@@ -13,10 +13,12 @@ import java.lang.Exception
 
 class CustomerRecyclerAdapter(
     private val data: ArrayList<Customer>,
-    private val customer_map: MutableMap<Int,String>
+    private val customer_map: MutableMap<Int,String>,
+    private val orderList: ArrayList<TempOrder>
 ):RecyclerView.Adapter<CustomerRecyclerAdapter.ViewHolder>(){
     private lateinit var database: FirebaseDatabase
     private var customerMap = customer_map
+    private var order_list = orderList
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_number = v.findViewById<TextView>(R.id.number)
         val tv_name = v.findViewById<TextView>(R.id.name)
@@ -48,10 +50,22 @@ class CustomerRecyclerAdapter(
                 database.getReference("customer").child(data[position].key).removeValue()
                 database.getReference("temp_order").child(data[position].number.toString()).removeValue()
                 customerMap.remove(data[position].number)
+                for (i in order_list){
+                    if (i.number == data[position].number.toString()){
+                        order_list.remove(i)
+                        break
+                    }
+                }
             }catch (e: Exception){
                 database.getReference("customer").child(data[position].key).removeValue()
                 database.getReference("temp_order").child(data[position].number.toString()).removeValue()
                 customerMap.remove(data[position].number)
+                for (i in order_list){
+                    if (i.number == data[position].number.toString()){
+                        order_list.remove(i)
+                        break
+                    }
+                }
             }finally {
                 data.removeAt(position)
                 notifyDataSetChanged()

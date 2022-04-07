@@ -1,6 +1,8 @@
 package com.yenmin.ordermeal
 
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -56,6 +58,7 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
             rv_order.layoutManager = LinearLayoutManager(requireActivity())
             rv_order.adapter = orderadapter
         }
+
         tempOrderRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()){
@@ -87,6 +90,10 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                         orderadapter.notifyDataSetChanged()
                         Log.e("temp_order_list",temp_order_list.toString())
                     }
+                    val b = Bundle()
+                    b.putParcelableArrayList("temp_order_list",temp_order_list)
+                    fragmentManager?.setFragmentResult("toCustomer", b)
+                    val managerActivity = activity as ManagerActivity
                 }
             }
 
@@ -159,9 +166,39 @@ data class SideDishNum(
         return  tempList
     }
 }
+
 data class TempOrder(
     var number: String,
     var meal: List<String>,
     var sideDish: List<String>,
     var cooked: Boolean
-)
+): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString()!!,
+        parcel.createStringArrayList()!!,
+        parcel.createStringArrayList()!!,
+        parcel.readByte() != 0.toByte()
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(number)
+        parcel.writeStringList(meal)
+        parcel.writeStringList(sideDish)
+        parcel.writeByte(if (cooked) 1 else 0)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<TempOrder> {
+        override fun createFromParcel(parcel: Parcel): TempOrder {
+            return TempOrder(parcel)
+        }
+
+        override fun newArray(size: Int): Array<TempOrder?> {
+            return arrayOfNulls(size)
+        }
+    }
+}
