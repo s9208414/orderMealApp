@@ -115,14 +115,6 @@ class OrderFragment(num: String) :Fragment(){
             tv_num.text = "桌號:"+" "+this.num
         }
         fragmentManager?.setFragmentResultListener("toCart",viewLifecycleOwner){ key,bundle ->
-            /*var tempMeal = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
-            for (i in tempMeal){
-                priceMealList.add(i)
-            }
-            var tempSideDish = bundle.getIntegerArrayList("priceSideDish") as ArrayList<Int>
-            for (i in tempSideDish){
-                priceSideDishList.add(i)
-            }*/
             mealSize = bundle.getInt("mealSize")
             sideDishSize = bundle.getInt("sideDishSize")
             //priceMealList = bundle.getIntegerArrayList("priceMeal") as ArrayList<Int>
@@ -237,6 +229,7 @@ class OrderFragment(num: String) :Fragment(){
                                         Log.e("orderMeal",orderMeal.toString())
                                         continue
                                     }else{
+                                        Log.e("orderMeal",orderMeal.toString())
                                         mealMap.put(i.key.toString(),Integer.parseInt(i.value.toString()))
                                         orderMeal.add(Order(i.key.toString(), Integer.parseInt(i.value.toString())))
                                     }

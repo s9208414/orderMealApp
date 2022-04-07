@@ -102,6 +102,8 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
 
             tempOrderRef.child(et_num.text.toString()).updateChildren(OrderchildUpdates).addOnSuccessListener {
                 Log.e("設定status","成功")
+            }.addOnFailureListener {
+                Log.e("設定status","失敗")
             }
         }
 

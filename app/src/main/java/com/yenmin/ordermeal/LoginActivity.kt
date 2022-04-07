@@ -120,10 +120,12 @@ class LoginActivity : AppCompatActivity() {
                         break
 
                     }else{
-                        Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
                         customerLogin = false
+                        continue
                     }
+                    Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
                 }
+                
                 //Log.e("customerList",customerList.toString())
                 Log.e("customerLogin",customerLogin.toString())
                 Log.e("number", number.toString())

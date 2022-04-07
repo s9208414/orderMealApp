@@ -66,7 +66,7 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                         Log.e("i.value",i.value.toString())
                         var temp = Gson().fromJson(i.value.toString(),Temp::class.java)
                         if (temp_order_map.containsKey(i.key)){
-                            if (temp.cooked == false){
+                            if (temp.cooked == false && temp.order == "已送出"){
                                 //var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
                                 try {
                                     temp_order_list[i.key?.toInt()!!].meal = temp.meal.getList()
@@ -77,7 +77,7 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                                 }
                             }
                         }else{
-                            if (temp.cooked == false){
+                            if (temp.cooked == false && temp.order == "已送出"){
                                 try {
                                     temp_order_map[i.key.toString()] = "true"
                                     var order = TempOrder(temp.id.toString(),temp.meal.getList(),temp.sideDish.getList(),temp.cooked)
@@ -92,8 +92,13 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
                     }
                     val b = Bundle()
                     b.putParcelableArrayList("temp_order_list",temp_order_list)
-                    fragmentManager?.setFragmentResult("toCustomer", b)
-                    val managerActivity = activity as ManagerActivity
+                    try {
+                        fragmentManager?.setFragmentResult("toCustomer", b)
+                        val managerActivity = activity!! as ManagerActivity
+                    }catch (e: Exception){
+
+                    }
+
                 }
             }
 

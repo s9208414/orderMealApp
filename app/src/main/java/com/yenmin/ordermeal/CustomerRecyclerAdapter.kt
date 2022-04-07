@@ -1,6 +1,7 @@
 package com.yenmin.ordermeal
 
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -69,6 +70,7 @@ class CustomerRecyclerAdapter(
             }finally {
                 data.removeAt(position)
                 notifyDataSetChanged()
+                Log.e("order_list",order_list.toString())
             }
 
 

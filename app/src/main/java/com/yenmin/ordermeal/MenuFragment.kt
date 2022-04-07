@@ -108,10 +108,7 @@ class MenuFragment(num: String):Fragment(){
                         if (i.key == "status"){
                             if (i.value.toString() == "空桌"){
                                 initTo0 = true
-                                val childUpdates = hashMapOf<String, Any>(
-                                    "status" to "使用中"
-                                )
-                                tempOrderRef.child(num).updateChildren(childUpdates)
+
                             }else{
                                 initTo0 = false
                             }
@@ -123,7 +120,7 @@ class MenuFragment(num: String):Fragment(){
         })
 
 
-        mealRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        mealRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -142,6 +139,10 @@ class MenuFragment(num: String):Fragment(){
                                 "${mealFromBase.name}" to 0
                             )
                             tempOrderRef.child(num).child("meal").updateChildren(childUpdates)
+                            val childUpdatestemp = hashMapOf<String, Any>(
+                                "status" to "使用中"
+                            )
+                            tempOrderRef.child(num).updateChildren(childUpdatestemp)
                         }
 
                         radioButton.id = str2int("cb_meal_${i.key}")
@@ -191,7 +192,7 @@ class MenuFragment(num: String):Fragment(){
             }
         })
 
-        sideDishRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        sideDishRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
             var recordLastCheckBoxId = 0
 
@@ -211,6 +212,10 @@ class MenuFragment(num: String):Fragment(){
                                 "${sideDishFromBase.name}" to 0
                             )
                             tempOrderRef.child(num).child("sideDish").updateChildren(childUpdates)
+                            val childUpdatestemp = hashMapOf<String, Any>(
+                                "status" to "使用中"
+                            )
+                            tempOrderRef.child(num).updateChildren(childUpdatestemp)
                         }
 
 
