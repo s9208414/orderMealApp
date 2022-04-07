@@ -108,6 +108,9 @@ class LoginActivity : AppCompatActivity() {
             }else{
                 //intent.putExtra("num",et_name.text.toString())
                 //startActivity(intent)
+                if (customerList.isEmpty()){
+                    Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
+                }
                 for (i in customerList){
                     if(et_name.text.toString() == i.name){
                         customerLogin = true
@@ -117,6 +120,7 @@ class LoginActivity : AppCompatActivity() {
                         break
 
                     }else{
+                        Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
                         customerLogin = false
                     }
                 }
@@ -133,7 +137,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
         }
-        customerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        customerRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -168,6 +172,7 @@ class LoginActivity : AppCompatActivity() {
 
                     }else{
                         Log.e("員工","未偵測到登入")
+                        Toast.makeText(this,"請輸入正確員工編號",Toast.LENGTH_SHORT).show()
                         emplyeeLogin = false
                     }
                 }
@@ -183,7 +188,7 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
         }
-        managerRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        managerRef.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError) {}
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {

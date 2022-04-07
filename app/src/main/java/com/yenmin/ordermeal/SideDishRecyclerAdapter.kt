@@ -16,6 +16,8 @@ class SideDishRecyclerAdapter(
     private lateinit var database: FirebaseDatabase
     var orderFragment = orderFragment
     var enable = true
+    var total = 0
+
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_name = v.findViewById<TextView>(R.id.name)
         val tv_number = v.findViewById<TextView>(R.id.number)
@@ -35,12 +37,16 @@ class SideDishRecyclerAdapter(
         database = FirebaseDatabase.getInstance()
         holder.tv_name.text = data[position].name
         holder.tv_number.text = "X"+data[position].number.toString()
+        total = 0
+        for (i in data){
+            total += i.number
+        }
         //設定監聽器，使用 removeAt()刪除指定位置的資料
         holder.img_delete.setOnClickListener {
             //data.removeAt(position)
             //notifyDataSetChanged()
             if (enable == true) {
-                if (data[position].number >= 1) {
+                if (data[position].number >= 1 && total > 1) {
                     --data[position].number
                 }
                 val childUpdates = hashMapOf<String, Any>(

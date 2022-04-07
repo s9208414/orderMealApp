@@ -90,7 +90,9 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
                 "status" to "空桌"
             )
 
-            tempOrderRef.child(et_num.text.toString()).updateChildren(OrderchildUpdates)
+            tempOrderRef.child(et_num.text.toString()).updateChildren(OrderchildUpdates).addOnSuccessListener {
+                Log.e("設定status","成功")
+            }
         }
 
         database = FirebaseDatabase.getInstance()
