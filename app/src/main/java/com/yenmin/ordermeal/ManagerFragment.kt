@@ -134,8 +134,8 @@ class ManagerFragment(num_manger: String, position: String): Fragment() {
                         if (et_position != null) {
                             et_position.text.clear()
                         }
-                        Log.e("customerMap",manager_map.toString())
-                        Log.e("customerList",manager_list.toString())
+                        Log.e("managerMap",manager_map.toString())
+                        Log.e("managerList",manager_list.toString())
                         manageradapter.notifyDataSetChanged()
 
                     }

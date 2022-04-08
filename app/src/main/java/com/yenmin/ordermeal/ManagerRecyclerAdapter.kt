@@ -50,7 +50,7 @@ class ManagerRecyclerAdapter(
                 managerMap.remove(data[position].id)
 
             }catch (e: Exception){
-                database.getReference("customer").child(data[position].key).removeValue()
+                database.getReference("manager").child(data[position].key).removeValue()
                 managerMap.remove(data[position].id)
             }finally {
                 data.removeAt(position)
