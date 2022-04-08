@@ -121,9 +121,13 @@ class LoginActivity : AppCompatActivity() {
 
                     }else{
                         customerLogin = false
+                        if (customerList.indexOf(i) == customerList.lastIndex){
+                            Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
+                        }
                         continue
                     }
-                    Toast.makeText(this,"請先到櫃台訂位",Toast.LENGTH_SHORT).show()
+
+
                 }
 
                 //Log.e("customerList",customerList.toString())
@@ -174,8 +178,11 @@ class LoginActivity : AppCompatActivity() {
 
                     }else{
                         Log.e("員工","未偵測到登入")
-                        Toast.makeText(this,"請輸入正確員工編號",Toast.LENGTH_SHORT).show()
                         emplyeeLogin = false
+                        if (managerList.indexOf(i) == managerList.lastIndex){
+                            Toast.makeText(this,"請輸入正確員編",Toast.LENGTH_SHORT).show()
+                        }
+                        continue
                     }
                 }
 
