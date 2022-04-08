@@ -99,6 +99,8 @@ class RecieveFragment(num_manger: String, position: String): Fragment() {
 
                     }
 
+                }else{
+                    temp_order_list.clear()
                 }
             }
 

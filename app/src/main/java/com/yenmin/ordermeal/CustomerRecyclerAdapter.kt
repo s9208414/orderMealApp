@@ -20,6 +20,7 @@ class CustomerRecyclerAdapter(
     private lateinit var database: FirebaseDatabase
     private var customerMap = customer_map
     private var order_list = orderList
+
     class ViewHolder(v: View): RecyclerView.ViewHolder(v){
         val tv_number = v.findViewById<TextView>(R.id.number)
         val tv_name = v.findViewById<TextView>(R.id.name)
@@ -57,6 +58,8 @@ class CustomerRecyclerAdapter(
                         break
                     }
                 }
+                data.removeAt(position)
+
             }catch (e: Exception){
                 database.getReference("customer").child(data[position].key).removeValue()
                 database.getReference("temp_order").child(data[position].number.toString()).removeValue()
@@ -67,8 +70,16 @@ class CustomerRecyclerAdapter(
                         break
                     }
                 }
-            }finally {
                 data.removeAt(position)
+            }finally {
+                try {
+                    if (data.size == 0){
+                        data.clear()
+                    }else{
+                        data.removeAt(position)
+                    }
+                }catch (e: Exception){Log.e("Exception",e.stackTraceToString())}
+
                 notifyDataSetChanged()
                 Log.e("order_list",order_list.toString())
             }

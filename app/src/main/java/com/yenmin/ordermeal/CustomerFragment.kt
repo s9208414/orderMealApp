@@ -49,7 +49,6 @@ class CustomerFragment(num_manger: String, position: String): Fragment() {
         var et_num = getView()?.findViewById<EditText>(R.id.et_num)
         var et_name = getView()?.findViewById<EditText>(R.id.et_name)
         var et_phone = getView()?.findViewById<EditText>(R.id.et_phone)
-
         if (tv_num_manager != null) {
             tv_num_manager.text = "員工編號:"+" "+this.num
         }

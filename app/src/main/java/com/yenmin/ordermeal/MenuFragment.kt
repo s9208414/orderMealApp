@@ -56,6 +56,8 @@ class MenuFragment(num: String):Fragment(){
     var sideDishNamePrice = mutableListOf<List<String>>()
     lateinit var fragment_menu: ConstraintLayout
     lateinit var radioGroup: RadioGroup
+    var mealDataSnapshot = ""
+    var sideDishDataSnapshot = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -124,6 +126,7 @@ class MenuFragment(num: String):Fragment(){
             override fun onCancelled(p0: DatabaseError) {}
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    mealDataSnapshot = dataSnapshot.childrenCount.toString()
                     for (i in dataSnapshot.children){
                         //在這裡依序動態建立RadioButton
                         val radioButton = RadioButton(requireActivity())
@@ -186,6 +189,7 @@ class MenuFragment(num: String):Fragment(){
                     b.putIntegerArrayList("priceMeal",tempList)
                     //b.putParcelableArrayList("mealName&Price",tempList)
                     //b.putParcelableArrayList("mealName&Price",tempList)
+
                     initMealState()
                     //Log.e("meal",meal)
                 }
@@ -198,6 +202,8 @@ class MenuFragment(num: String):Fragment(){
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    //Log.e("sideDish all",dataSnapshot.childrenCount.toString())
+                    sideDishDataSnapshot = dataSnapshot.childrenCount.toString()
                     for (i in dataSnapshot.children){
                         //在這裡依序動態建立CheckBox
                         val checkBox = CheckBox(requireActivity())
@@ -289,8 +295,13 @@ class MenuFragment(num: String):Fragment(){
                             i -> tempList.add(i)
                     }
                     b.putIntegerArrayList("priceSideDish",tempList)
-                    fragmentManager?.setFragmentResult("toCart", b)
-                    val mainActivity = activity as MainActivity
+                    if (priceMealList.size.toString() == mealDataSnapshot && priceSideDishList.size.toString() == sideDishDataSnapshot){
+                        Log.e("執行到","true")
+                        fragmentManager?.setFragmentResult("toCart", b)
+                        val mainActivity = activity as MainActivity
+                    }else{
+                        Log.e("執行到","false")
+                    }
                     //Log.e("mealList",mealList.toString())
                     initSideDishState()
                     val btn_add2Cart_params = btn_add2Cart.layoutParams as ConstraintLayout.LayoutParams
@@ -302,6 +313,10 @@ class MenuFragment(num: String):Fragment(){
                 }
             }
         })
+
+
+
+
         //var b = Bundle()
         //b.putString("num",this.num)
         /*var mealList = ArrayList<Int>()

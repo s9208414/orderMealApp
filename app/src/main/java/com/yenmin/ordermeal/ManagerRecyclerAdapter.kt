@@ -43,22 +43,27 @@ class ManagerRecyclerAdapter(
         holder.tv_name.text = data[position].name
         holder.tv_position.text = data[position].position
         holder.btn_del_manager.setBackgroundColor(Color.parseColor("#ff0000"))
-        //設定監聽器，使用 removeAt()刪除指定位置的資料
-        holder.btn_del_manager.setOnClickListener {
-            try {
-                database.getReference("manager").child(data[position].key).removeValue()
-                managerMap.remove(data[position].id)
+        if (data[position].position == "boss"){
+            holder.btn_del_manager.visibility = View.GONE
+        }else{
+            //設定監聽器，使用 removeAt()刪除指定位置的資料
+            holder.btn_del_manager.setOnClickListener {
+                try {
+                    database.getReference("manager").child(data[position].key).removeValue()
+                    managerMap.remove(data[position].id)
 
-            }catch (e: Exception){
-                database.getReference("manager").child(data[position].key).removeValue()
-                managerMap.remove(data[position].id)
-            }finally {
-                data.removeAt(position)
-                notifyDataSetChanged()
+                }catch (e: Exception){
+                    database.getReference("manager").child(data[position].key).removeValue()
+                    managerMap.remove(data[position].id)
+                }finally {
+                    data.removeAt(position)
+                    notifyDataSetChanged()
+                }
+
+
             }
-
-
         }
+
 
 
     }

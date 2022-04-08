@@ -35,7 +35,7 @@ class LoginActivity : AppCompatActivity() {
     lateinit var btn_manager:Button
     lateinit var tv_welcome:TextView
     lateinit var btn_employee_sendNum:Button
-
+    lateinit var customerList: MutableList<Customer>
     private lateinit var mealRef: DatabaseReference
     //店家欄位
     var id = ""
@@ -75,7 +75,7 @@ class LoginActivity : AppCompatActivity() {
         FirebaseApp.initializeApp(this)
 
         var managerList = mutableListOf<Manager>()
-        var customerList = mutableListOf<Customer>()
+        customerList = mutableListOf<Customer>()
         //設定按下顧客進入按鈕產生的UI
         btn_customer.setOnClickListener {
             tv_welcome_params.bottomToTop = et_name.id
@@ -130,7 +130,7 @@ class LoginActivity : AppCompatActivity() {
 
                 }
 
-                //Log.e("customerList",customerList.toString())
+                Log.e("133customerList",customerList.toString())
                 Log.e("customerLogin",customerLogin.toString())
                 Log.e("number", number.toString())
                 if(customerLogin == true){
@@ -155,10 +155,12 @@ class LoginActivity : AppCompatActivity() {
                         //Log.e("Value is",i.value.toString())
                         //managerList.add(Manager(i.value.))
                     }
-                    Log.e("CustomerList",customerList.toString())
+                    Log.e("159customerList",customerList.toString())
                     //employeeId = dataSnapshot.getValue<String>().toString()
 
                     //Log.e("Value is",employeeId.toString())
+                }else{
+                    customerList.clear()
                 }
             }
         })
@@ -212,6 +214,8 @@ class LoginActivity : AppCompatActivity() {
                     //employeeId = dataSnapshot.getValue<String>().toString()
 
                     //Log.e("Value is",employeeId.toString())
+                }else{
+                    managerList.clear()
                 }
             }
         })

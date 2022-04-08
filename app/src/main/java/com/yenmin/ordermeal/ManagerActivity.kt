@@ -8,7 +8,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.google.android.material.tabs.TabLayout
 
-class ManagerActivity : AppCompatActivity()  {
+class ManagerActivity() : AppCompatActivity()  {
     private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯","訂位功能")
     lateinit var num : String
     lateinit var position : String
@@ -20,7 +20,6 @@ class ManagerActivity : AppCompatActivity()  {
     lateinit var fg2:ModifyFragment
     lateinit var fg3:CustomerFragment
     lateinit var fg4:ManagerFragment
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_manager)
