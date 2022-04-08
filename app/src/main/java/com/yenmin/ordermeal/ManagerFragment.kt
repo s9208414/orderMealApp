@@ -20,7 +20,7 @@ import com.google.gson.annotations.SerializedName
 class ManagerFragment(num_manger: String, position: String): Fragment() {
     private lateinit var database: FirebaseDatabase
     private lateinit var managerRef: DatabaseReference
-    private lateinit var customeradapter: CustomerRecyclerAdapter
+    private lateinit var manageradapter: ManagerRecyclerAdapter
     private var manager_list = ArrayList<Manager>()
     private var manager_map = mutableMapOf<String,String>()
     var num = num_manger
@@ -93,7 +93,7 @@ class ManagerFragment(num_manger: String, position: String): Fragment() {
         managerRef = database.getReference("manager")
         FirebaseApp.initializeApp(requireActivity())
 
-        manageradapter = CustomerRecyclerAdapter(manager_list,manager_map)
+        manageradapter = ManagerRecyclerAdapter(manager_list,manager_map)
         if (rv_manager != null) {
             rv_manager.addItemDecoration(decoration)
             rv_manager.layoutManager = LinearLayoutManager(requireActivity())

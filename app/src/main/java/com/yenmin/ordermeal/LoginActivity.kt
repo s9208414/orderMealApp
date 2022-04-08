@@ -255,7 +255,8 @@ data class Manager(
     @SerializedName("name")
     var name: String,
     @SerializedName("position")
-    var position: String
+    var position: String,
+    var key: String
 )
 data class Customer(
     @SerializedName("number")

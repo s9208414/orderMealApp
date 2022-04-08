@@ -14,10 +14,12 @@ class ManagerActivity : AppCompatActivity()  {
     lateinit var position : String
     var switch : Boolean = false
     lateinit var managerViewPagerAdapter:ManagerViewPagerAdapter
+    lateinit var bossViewPagerAdapter:BossViewPagerAdapter
     lateinit var pager_manager: ViewPager
     lateinit var fg1:RecieveFragment
     lateinit var fg2:ModifyFragment
     lateinit var fg3:CustomerFragment
+    lateinit var fg4:ManagerFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +42,20 @@ class ManagerActivity : AppCompatActivity()  {
             num = it.getString("id").toString()
             position = it.getString("position").toString()
             Log.e("MA",num.toString())
+            fg4 = ManagerFragment(num,position)
             fg3 = CustomerFragment(num,position)
             fg2 = ModifyFragment(num,position)
             fg1 = RecieveFragment(num,position)
             /*pager.adapter = ViewPagerAdapter(supportFragmentManager,lifecycle,num)
             supportFragmentManager.beginTransaction().commit()*/
-            managerViewPagerAdapter = ManagerViewPagerAdapter(supportFragmentManager,num,fg1,fg2,fg3)
-            pager_manager.adapter = managerViewPagerAdapter
+            if (position == "老闆" || position == "boss"){
+                bossViewPagerAdapter = BossViewPagerAdapter(supportFragmentManager,num,fg1,fg2,fg3,fg4)
+                pager_manager.adapter = bossViewPagerAdapter
+            }else{
+                managerViewPagerAdapter = ManagerViewPagerAdapter(supportFragmentManager,num,fg1,fg2,fg3)
+                pager_manager.adapter = managerViewPagerAdapter
+            }
+
             //Log.e("myViewPagerAdapter",myViewPagerAdapter.toString())
 
         }
@@ -77,6 +86,29 @@ class ManagerViewPagerAdapter(fm: FragmentManager, num : String, fg1: RecieveFra
         0 -> fg1
         1 -> fg2
         2 -> fg3
+        else -> fg1
+
+    }
+
+    override fun getPageTitle(position: Int): CharSequence? {
+        return FragmentTitleList[position]
+    }
+
+}
+class BossViewPagerAdapter(fm: FragmentManager, num : String, fg1: RecieveFragment, fg2: ModifyFragment, fg3: CustomerFragment, fg4: ManagerFragment) : FragmentStatePagerAdapter(fm){
+    var num = num
+    val fg1 = fg1
+    val fg2 = fg2
+    val fg3 = fg3
+    val fg4 = fg4
+    private val FragmentTitleList: List<String> = listOf("訂單接收","菜單編輯","訂位功能","員工編輯")
+    override fun getCount() = 4
+
+    override fun getItem(position: Int) = when(position){
+        0 -> fg1
+        1 -> fg2
+        2 -> fg3
+        3 -> fg4
         else -> fg1
 
     }
